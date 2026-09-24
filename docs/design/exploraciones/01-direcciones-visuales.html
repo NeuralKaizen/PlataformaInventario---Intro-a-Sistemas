@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Direcciones visuales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Syne:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#16140f; --paper:#efe9dd; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1b1a17; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; min-height:100vh; }
+  header.q { padding:28px 40px 18px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:30px; letter-spacing:-.01em; }
+  header.q h1 em { font-style:italic; color:#e9b44c; }
+  header.q p { color:#a39d90; font-size:14px; max-width:620px; margin-top:6px; line-height:1.5; }
+  .cards { display:flex; gap:10px; }
+  .card { cursor:pointer; border:1px solid #3a372f; border-radius:999px; padding:10px 18px 10px 12px; display:flex; align-items:center; gap:10px; font-size:14px; transition:.25s; background:#23211d; }
+  .card:hover { border-color:#6d675a; }
+  .card .dot { width:22px; height:22px; border-radius:50%; }
+  .card.active { background:#efe9dd; color:#16140f; border-color:#efe9dd; }
+  .card.selected::after { content:'✓ elegida'; font-size:11px; margin-left:4px; padding:2px 8px; border-radius:99px; background:#e9b44c; color:#16140f; }
+  .stagewrap { padding:0 40px 20px; }
+  .stage { position:relative; width:100%; aspect-ratio: 16/9.2; max-height:78vh; border-radius:18px; overflow:hidden; box-shadow:0 30px 80px -20px #000a; }
+  .scene { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .6s; }
+  .scene.on { opacity:1; pointer-events:auto; }
+  .notes { padding:0 40px 40px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .note { font-size:13.5px; line-height:1.55; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; opacity:.45; transition:.3s; }
+  .note.on { opacity:1; }
+  .note b { color:#efe9dd; font-weight:600; display:block; font-size:15px; margin-bottom:4px; }
+  .note i { color:#e9b44c; font-style:normal; }
+
+  /* ================= A — MERCADO VIVO ================= */
+  #A { background:#f1eadb; color:#2b2419; font-family:'Instrument Sans',sans-serif; }
+  #A .grain { position:absolute; inset:0; opacity:.35; mix-blend-mode:multiply; pointer-events:none; z-index:5;
+     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  #A canvas { position:absolute; inset:0; width:100%; height:100%; }
+  #A .nav { position:absolute; left:3.2%; top:7%; bottom:7%; display:flex; flex-direction:column; justify-content:space-between; z-index:3; }
+  #A .brand { font-family:'Fraunces',serif; font-size:2.1vw; font-weight:600; font-style:italic; letter-spacing:-.02em; }
+  #A .brand span { color:#c2502e; }
+  #A .nav ul { list-style:none; display:flex; flex-direction:column; gap:1.1vw; font-family:'Fraunces',serif; font-size:1.05vw; }
+  #A .nav li { opacity:.45; cursor:pointer; transition:.3s; }
+  #A .nav li.cur { opacity:1; font-style:italic; }
+  #A .nav li.cur::before { content:'●'; color:#c2502e; font-size:.6em; margin-right:.5em; vertical-align:middle; }
+  #A .nav small { font-size:.75vw; opacity:.5; }
+  #A .head { position:absolute; right:4%; top:8%; width:34%; z-index:3; }
+  #A .kicker { font-size:.72vw; letter-spacing:.18em; text-transform:uppercase; opacity:.6; }
+  #A .head h2 { font-family:'Fraunces',serif; font-weight:350; font-size:2.6vw; line-height:1.05; letter-spacing:-.02em; margin-top:.6vw; }
+  #A .head h2 em { color:#c2502e; font-weight:500; }
+  #A .plan { position:absolute; right:4%; bottom:8%; width:34%; z-index:3; background:#fbf7ee; border-radius:1.2vw; padding:1.3vw 1.5vw; box-shadow:0 1vw 3vw -1vw #6b4a2455; }
+  #A .plan h4 { font-family:'Fraunces',serif; font-weight:500; font-size:1.1vw; display:flex; justify-content:space-between; }
+  #A .plan h4 span { font-family:'Instrument Sans'; font-size:.7vw; opacity:.5; font-weight:400; }
+  #A .row { display:flex; align-items:center; gap:.7vw; font-size:.85vw; padding:.55vw 0; border-bottom:1px dashed #d9ccb4; }
+  #A .row:last-child { border:0; }
+  #A .sw { width:.8vw; height:.8vw; border-radius:50%; flex:none; }
+  #A .row .n { flex:1; }
+  #A .row .q { font-family:'Fraunces',serif; font-size:1vw; }
+  #A .row .when { font-size:.7vw; opacity:.55; width:5vw; text-align:right; }
+  #A svg.curve { position:absolute; right:4%; top:33%; width:34%; height:20%; z-index:3; overflow:visible; }
+  #A .curve path.l { stroke-dasharray:1400; stroke-dashoffset:1400; animation:drawA 3s .4s ease forwards; }
+  @keyframes drawA { to { stroke-dashoffset:0; } }
+  #A .tip { position:absolute; z-index:4; pointer-events:none; background:#2b2419; color:#f1eadb; font-size:.75vw; padding:.4vw .7vw; border-radius:.5vw; opacity:0; transition:opacity .2s; white-space:nowrap; }
+
+  /* ================= B — COCINA NOCTURNA ================= */
+  #B { background:#0a0c09; color:#e8efe0; font-family:'IBM Plex Mono',monospace; }
+  #B canvas { position:absolute; inset:0; width:100%; height:100%; }
+  #B .top { position:absolute; left:3%; right:3%; top:5%; display:flex; justify-content:space-between; align-items:center; z-index:3; }
+  #B .brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.9vw; letter-spacing:-.03em; }
+  #B .brand i { color:#c6f432; font-style:normal; }
+  #B .tabs { display:flex; gap:.4vw; font-size:.78vw; }
+  #B .tabs span { padding:.45vw .9vw; border:1px solid #2a3024; border-radius:99px; opacity:.6; }
+  #B .tabs span.cur { background:#c6f432; color:#0a0c09; opacity:1; border-color:#c6f432; }
+  #B .hero { position:absolute; left:3%; top:17%; z-index:3; }
+  #B .hero .lbl { font-size:.72vw; opacity:.5; letter-spacing:.1em; }
+  #B .hero .big { font-family:'Syne',sans-serif; font-weight:700; font-size:5.2vw; line-height:.95; letter-spacing:-.04em; margin-top:.3vw; }
+  #B .hero .big sup { font-size:.35em; color:#c6f432; vertical-align:top; margin-left:.3vw; }
+  #B .hero p { font-size:.85vw; opacity:.65; max-width:22vw; margin-top:.8vw; line-height:1.5; }
+  #B .col { position:absolute; bottom:22%; z-index:3; font-size:.72vw; letter-spacing:.12em; opacity:.45; }
+  #B .col.l { left:3%; } #B .col.r { right:3%; text-align:right; }
+  #B .lbls { position:absolute; inset:0; z-index:3; pointer-events:none; }
+  #B .lbls div { position:absolute; font-size:.72vw; transform:translateY(-50%); white-space:nowrap; }
+  #B .lbls div b { font-weight:500; }
+  #B .ask { position:absolute; left:50%; bottom:6%; transform:translateX(-50%); width:44%; z-index:3; border:1px solid #2f3629; background:#0f130dcc; backdrop-filter:blur(8px); border-radius:99px; padding:.9vw 1.3vw; font-size:.85vw; display:flex; align-items:center; gap:.8vw; }
+  #B .ask .orb { width:1.3vw; height:1.3vw; border-radius:50%; background:conic-gradient(#c6f432,#ff4d2e,#ffb000,#c6f432); animation:spin 3s linear infinite; filter:blur(.5px); }
+  @keyframes spin { to { transform:rotate(360deg);} }
+  #B .ask .typed { opacity:.8; }
+  #B .ask .typed::after { content:'▍'; animation:blink 1s steps(2) infinite; color:#c6f432; }
+  @keyframes blink { 50% { opacity:0; } }
+  #B .alert { position:absolute; right:3%; top:17%; z-index:3; width:20vw; border-left:2px solid #ff4d2e; padding:.4vw 0 .4vw 1vw; font-size:.8vw; line-height:1.5; }
+  #B .alert b { color:#ff4d2e; font-weight:500; display:block; letter-spacing:.1em; font-size:.7vw; margin-bottom:.3vw; }
+
+  /* ================= C — COMANDA RISO ================= */
+  #C { background:#f6f0e4; color:#1d1a2b; font-family:'Bricolage Grotesque',sans-serif; }
+  #C .ht { position:absolute; inset:0; background-image:radial-gradient(#0078bf 1px, transparent 1.3px); background-size:9px 9px; opacity:.08; }
+  #C .top { position:absolute; left:3%; right:3%; top:5%; display:flex; align-items:center; gap:2vw; z-index:3; }
+  #C .brand { font-weight:800; font-size:2.4vw; letter-spacing:-.05em; position:relative; }
+  #C .brand::before { content:'mise'; position:absolute; left:.12vw; top:.1vw; color:#ff48b0; mix-blend-mode:multiply; z-index:-1; }
+  #C nav { display:flex; gap:1.6vw; font-family:'DM Mono',monospace; font-size:.8vw; text-transform:uppercase; }
+  #C nav span { opacity:.5; } #C nav span.cur { opacity:1; text-decoration:underline wavy #ff48b0; text-underline-offset:.4vw; }
+  #C .blobs { position:absolute; inset:0; z-index:1; }
+  #C .blob { position:absolute; border-radius:50%; mix-blend-mode:multiply; animation:float 9s ease-in-out infinite alternate; }
+  @keyframes float { to { transform:translate(2vw,-1.5vw) rotate(20deg) scale(1.06);} }
+  #C .title { position:absolute; left:3%; top:17%; z-index:3; width:44%; }
+  #C .title h2 { font-weight:800; font-size:4.6vw; line-height:.9; letter-spacing:-.05em; }
+  #C .title h2 .hl { background:#ffe800; mix-blend-mode:multiply; padding:0 .4vw; }
+  #C .title h2 .pk { color:#ff48b0; }
+  #C .title p { font-family:'DM Mono',monospace; font-size:.8vw; margin-top:1vw; max-width:28vw; line-height:1.6; }
+  #C .rail { position:absolute; right:3%; top:13%; width:48%; height:3px; background:#1d1a2b; z-index:3; border-radius:2px; }
+  #C .tickets { position:absolute; right:3%; top:13%; width:48%; display:flex; justify-content:space-around; z-index:3; }
+  #C .tk { width:10.2vw; background:#fffdf7; padding:1vw .9vw 1.2vw; font-family:'DM Mono',monospace; font-size:.72vw; transform-origin:top center; animation:swing 3.4s ease-in-out infinite alternate; box-shadow:.4vw .5vw 0 #1d1a2b; position:relative; }
+  #C .tk::before { content:''; position:absolute; top:-.8vw; left:50%; width:1.6vw; height:1.2vw; margin-left:-.8vw; background:#1d1a2b; border-radius:.2vw; }
+  #C .tk:nth-child(2) { animation-delay:-1.2s; margin-top:.6vw; } #C .tk:nth-child(3) { animation-delay:-2.1s; } #C .tk:nth-child(4){ animation-delay:-.5s; margin-top:.3vw;}
+  @keyframes swing { from { transform:rotate(-2.5deg);} to { transform:rotate(2.5deg);} }
+  #C .tk h5 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.2vw; letter-spacing:-.03em; margin-bottom:.5vw; }
+  #C .tk .li { display:flex; justify-content:space-between; border-bottom:1px dotted #1d1a2b55; padding:.25vw 0; }
+  #C .tk .stamp { margin-top:.6vw; display:inline-block; border:2px solid; padding:.1vw .5vw; transform:rotate(-6deg); font-weight:500; }
+  #C .tk .zig { position:absolute; left:0; right:0; bottom:-.6vw; height:.6vw; background:linear-gradient(-45deg,transparent .3vw,#fffdf7 0) 0 0/.6vw .6vw, linear-gradient(45deg,transparent .3vw,#fffdf7 0) 0 0/.6vw .6vw; }
+  #C .week { position:absolute; left:3%; right:3%; bottom:7%; height:24%; z-index:3; display:flex; gap:.8vw; align-items:flex-end; }
+  #C .day { flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%; position:relative; }
+  #C .day .bar { border-radius:1vw 1vw .3vw .3vw; mix-blend-mode:multiply; transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes grow { from { transform:scaleY(0);} }
+  #C .day .d { font-family:'DM Mono',monospace; font-size:.72vw; margin-top:.4vw; text-transform:uppercase; }
+  #C .day.today .d { background:#1d1a2b; color:#f6f0e4; padding:0 .4vw; align-self:flex-start; }
+  #C .sticker { position:absolute; z-index:4; right:31%; bottom:34%; width:8vw; height:8vw; border-radius:50%; background:#ffe800; display:flex; align-items:center; justify-content:center; text-align:center; font-weight:800; font-size:.95vw; line-height:1.05; transform:rotate(-12deg); animation:wob 4s ease-in-out infinite; box-shadow:.3vw .3vw 0 #ff48b0; }
+  @keyframes wob { 50% { transform:rotate(-4deg) scale(1.05);} }
+</style>
+</head>
+<body>
+<header class="q">
+  <div>
+    <h1>¿Qué <em>sensación</em> debería tener la plataforma?</h1>
+    <p>Son tres direcciones vivas. Todas muestran la misma pantalla, el <b>Panorama</b> (lo que el restaurante ve al entrar), para que se puedan comparar. El nombre <i>“mise”</i> (de <i>mise en place</i>) es provisional. Pasa el mouse por las escenas. Haz clic en una pastilla para verla y márcala como elegida.</p>
+  </div>
+  <div class="cards">
+    <div class="card active" data-choice="A-mercado-vivo" onclick="pick(this,'A')"><span class="dot" style="background:radial-gradient(circle at 30% 30%,#e7a04a,#c2502e)"></span>A · Mercado vivo</div>
+    <div class="card" data-choice="B-cocina-nocturna" onclick="pick(this,'B')"><span class="dot" style="background:radial-gradient(circle at 30% 30%,#c6f432,#0a0c09 75%)"></span>B · Cocina nocturna</div>
+    <div class="card" data-choice="C-comanda-riso" onclick="pick(this,'C')"><span class="dot" style="background:conic-gradient(#ff48b0 0 33%,#0078bf 0 66%,#ffe800 0)"></span>C · Comanda riso</div>
+  </div>
+</header>
+
+<div class="stagewrap"><div class="stage">
+
+<!-- ============ A ============ -->
+<section class="scene on" id="A">
+  <canvas id="cA"></canvas>
+  <div class="grain"></div>
+  <div class="tip" id="tipA"></div>
+  <div class="nav">
+    <div class="brand">mise<span>.</span></div>
+    <ul>
+      <li class="cur">Panorama</li><li>Despensa</li><li>Plan de compra</li><li>Pronóstico</li><li>Proveedores</li><li>Asistente</li>
+    </ul>
+    <small>La Olla de Nico · Chapinero</small>
+  </div>
+  <div class="head">
+    <div class="kicker">Jueves 24 · semana 39</div>
+    <h2>Esta semana puedes comprar <em>18% menos</em> y aun así no te falta nada.</h2>
+  </div>
+  <svg class="curve" viewBox="0 0 400 120" preserveAspectRatio="none">
+    <path d="M0 95 C40 90 60 60 100 62 S160 30 200 40 S260 85 300 70 S360 20 400 30" fill="none" stroke="#2b2419" stroke-opacity=".15" stroke-width="10" stroke-linecap="round"/>
+    <path class="l" d="M0 95 C40 90 60 60 100 62 S160 30 200 40 S260 85 300 70 S360 20 400 30" fill="none" stroke="#c2502e" stroke-width="2.2"/>
+    <text x="0" y="118" font-size="10" fill="#2b2419" opacity=".5" font-family="Instrument Sans">demanda esperada · próximos 7 días</text>
+  </svg>
+  <div class="plan">
+    <h4>Comprar antes del viernes <span>3 de 11 insumos</span></h4>
+    <div class="row"><span class="sw" style="background:#c2502e"></span><span class="n">Tomate chonto</span><span class="q">14 kg</span><span class="when">hoy · 2 días</span></div>
+    <div class="row"><span class="sw" style="background:#e7a04a"></span><span class="n">Plátano maduro</span><span class="q">9 kg</span><span class="when">mañ. · 1 día</span></div>
+    <div class="row"><span class="sw" style="background:#6f7d3a"></span><span class="n">Cilantro</span><span class="q">1.2 kg</span><span class="when">vie · 1 día</span></div>
+  </div>
+</section>
+
+<!-- ============ B ============ -->
+<section class="scene" id="B">
+  <canvas id="cB"></canvas>
+  <div class="lbls" id="lblB"></div>
+  <div class="top">
+    <div class="brand">mise<i>/</i></div>
+    <div class="tabs"><span class="cur">panorama</span><span>despensa</span><span>plan</span><span>pronóstico</span><span>proveedores</span></div>
+  </div>
+  <div class="hero">
+    <div class="lbl">FLUJO DE ESTA SEMANA</div>
+    <div class="big">412 kg<sup>−18%</sup></div>
+    <p>Esto es lo que va a pasar por tu cocina. Cada partícula es ~100 g de un insumo que viaja del proveedor al plato.</p>
+  </div>
+  <div class="alert"><b>● RIESGO · 36 H</b>El tomate se acaba el sábado a mediodía. Tu proveedor tarda 2 días en entregar: pide hoy antes de las 4 p. m.</div>
+  <div class="col l">PROVEEDORES →</div><div class="col r">→ PLATOS</div>
+  <div class="ask"><span class="orb"></span><span class="typed" id="typedB"></span></div>
+</section>
+
+<!-- ============ C ============ -->
+<section class="scene" id="C">
+  <div class="ht"></div>
+  <div class="blobs">
+    <div class="blob" style="width:22vw;height:22vw;background:#ff48b0;left:-4vw;top:28vw;opacity:.55"></div>
+    <div class="blob" style="width:16vw;height:16vw;background:#0078bf;left:30vw;top:-5vw;opacity:.35;animation-delay:-3s"></div>
+    <div class="blob" style="width:12vw;height:12vw;background:#ffe800;left:40vw;top:20vw;opacity:.8;animation-delay:-6s"></div>
+  </div>
+  <div class="top">
+    <div class="brand">mise</div>
+    <nav><span class="cur">Panorama</span><span>Despensa</span><span>Plan</span><span>Pronóstico</span><span>Proveedores</span><span>Chef IA</span></nav>
+  </div>
+  <div class="title">
+    <h2>Hoy se piden <span class="hl">3 cosas</span>, lo demás <span class="pk">aguanta.</span></h2>
+    <p>Cada comanda es un pedido sugerido a partir de tus ventas. Arrástrala para cambiar la fecha o tócala para editar cantidades.</p>
+  </div>
+  <div class="rail"></div>
+  <div class="tickets">
+    <div class="tk"><h5>Fruver El Paisa</h5><div class="li"><span>tomate</span><span>14kg</span></div><div class="li"><span>cilantro</span><span>1.2kg</span></div><div class="li"><span>cebolla</span><span>6kg</span></div><span class="stamp" style="color:#ff48b0">PEDIR HOY</span><div class="zig"></div></div>
+    <div class="tk"><h5>Carnes JR</h5><div class="li"><span>pechuga</span><span>18kg</span></div><div class="li"><span>res molida</span><span>7kg</span></div><span class="stamp" style="color:#0078bf">JUEVES</span><div class="zig"></div></div>
+    <div class="tk"><h5>Plaza 7 de agosto</h5><div class="li"><span>plátano</span><span>9kg</span></div><div class="li"><span>yuca</span><span>5kg</span></div><span class="stamp" style="color:#ff48b0">MAÑANA</span><div class="zig"></div></div>
+    <div class="tk"><h5>Lácteos Sol</h5><div class="li"><span>queso</span><span>4kg</span></div><div class="li"><span>crema</span><span>3L</span></div><span class="stamp" style="color:#1d1a2b">SÁBADO</span><div class="zig"></div></div>
+  </div>
+  <div class="sticker">−18%<br>vs semana<br>pasada</div>
+  <div class="week" id="weekC"></div>
+</section>
+
+</div></div>
+
+<div class="notes">
+  <div class="note on" id="nA"><b>A · Mercado vivo</b>Cálido, editorial y orgánico, como una plaza de mercado. Cada insumo es una <i>célula que respira</i>: su tamaño es el stock y late cuando se está acabando. Usa una serif con carácter, tonos de achiote, mostaza y oliva, y textura de papel. Transmite calma y oficio.</div>
+  <div class="note" id="nB"><b>B · Cocina nocturna</b>Oscuro y cinético. La cocina es un <i>sistema de flujos</i>: partículas que viajan de los proveedores a los platos, con alertas que aparecen como señales. Es la opción más “wow” para proyectar en clase. El asistente de IA vive en una barra de comando al pie.</div>
+  <div class="note" id="nC"><b>C · Comanda riso</b>Tipo impresión risográfica: tintas fluorescentes superpuestas, semitonos y stickers. Los planes de compra son <i>comandas colgadas en un riel</i> que se mueven y se pueden arrastrar. Es la más divertida y memorable, pero sin perder la lectura rápida.</div>
+</div>
+
+<script>
+function pick(el, s){
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active','selected'));
+  el.classList.add('active','selected');
+  document.querySelectorAll('.scene').forEach(x=>x.classList.toggle('on', x.id===s));
+  document.querySelectorAll('.note').forEach(x=>x.classList.toggle('on', x.id==='n'+s));
+  if (window.brainstorm) window.brainstorm.choice(el.dataset.choice);
+}
+function fit(c){ const r=c.getBoundingClientRect(), d=devicePixelRatio||1; c.width=r.width*d; c.height=r.height*d; const x=c.getContext('2d'); x.setTransform(d,0,0,d,0,0); return [r.width,r.height,x]; }
+
+/* ---------- A: breathing ingredient cells ---------- */
+(()=>{
+  const c=document.getElementById('cA'), tip=document.getElementById('tipA');
+  const items=[
+    ['Tomate chonto','#c2502e',.55,'4.1 kg · alcanza 2 días',true],['Papa pastusa','#d9a441',1,'38 kg · alcanza 9 días'],
+    ['Plátano maduro','#e7a04a',.5,'3.2 kg · alcanza 1 día',true],['Arroz','#e8dcc2',1.15,'52 kg · alcanza 14 días'],
+    ['Pechuga','#e59a86',.8,'11 kg · alcanza 4 días'],['Cilantro','#6f7d3a',.38,'0.3 kg · alcanza 1 día',true],
+    ['Cebolla larga','#9aa35a',.62,'5 kg · alcanza 3 días'],['Frijol','#7a3b2e',.9,'20 kg · alcanza 8 días'],
+    ['Queso campesino','#f2d68a',.6,'4 kg · alcanza 3 días'],['Aguacate','#4f6b2c',.55,'22 und · alcanza 2 días'],['Limón','#b9c24a',.45,'6 kg · alcanza 3 días']];
+  let W,H,x,cells,mouse={x:-1,y:-1};
+  function init(){ [W,H,x]=fit(c); const cx=W*.36, cy=H*.5;
+    cells=items.map((it,i)=>{const a=i*2.4, r=Math.sqrt(i+.5)*W*.052; return {n:it[0],col:it[1],s:it[2],t:it[3],low:it[4],x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r*0.9,vx:0,vy:0,ph:Math.random()*6};}); }
+  c.parentElement.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(); mouse={x:e.clientX-r.left,y:e.clientY-r.top};});
+  function blob(cx,cy,R,t,ph){ x.beginPath(); for(let k=0;k<=48;k++){const a=k/48*Math.PI*2; const rr=R*(1+.06*Math.sin(a*3+t*1.3+ph)+.04*Math.sin(a*5-t*.9+ph)); const px=cx+Math.cos(a)*rr, py=cy+Math.sin(a)*rr; k?x.lineTo(px,py):x.moveTo(px,py);} x.closePath(); }
+  function frame(ts){ const t=ts/1000; x.clearRect(0,0,W,H); let hover=null;
+    const cx=W*.36, cy=H*.5;
+    cells.forEach(a=>{ a.R=W*.045*a.s*(1+.03*Math.sin(t*1.6+a.ph));
+      a.vx+=(cx-a.x)*.0006; a.vy+=(cy-a.y)*.0006;
+      cells.forEach(b=>{ if(a===b) return; const dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy)||1, m=a.R+b.R+W*.012; if(d<m){ const f=(m-d)/d*.04; a.vx+=dx*f; a.vy+=dy*f; } });
+      const dm=Math.hypot(a.x-mouse.x,a.y-mouse.y); if(dm<a.R) hover=a; else if(dm<a.R+80){ a.vx+=(a.x-mouse.x)/dm*.08; a.vy+=(a.y-mouse.y)/dm*.08; }
+      a.vx*=.9; a.vy*=.9; a.x+=a.vx; a.y+=a.vy; });
+    cells.forEach(a=>{
+      if(a.low){ const p=(t*.7+a.ph)%1; x.strokeStyle=`rgba(194,80,46,${.5*(1-p)})`; x.lineWidth=1.5; blob(a.x,a.y,a.R*(1+p*.7),t,a.ph); x.stroke(); }
+      const g=x.createRadialGradient(a.x-a.R*.35,a.y-a.R*.4,a.R*.1,a.x,a.y,a.R*1.1); g.addColorStop(0,'#fff8'); g.addColorStop(.35,a.col); g.addColorStop(1,a.col);
+      x.fillStyle=g; blob(a.x,a.y,a.R*(hover===a?1.08:1),t,a.ph); x.fill();
+      x.fillStyle=a.col==='#e8dcc2'||a.col==='#f2d68a'?'#2b2419':'#fbf5ea'; x.textAlign='center';
+      x.font=`italic 500 ${Math.max(10,a.R*.26)}px Fraunces`; x.fillText(a.n.split(' ')[0],a.x,a.y+a.R*.08);
+      x.font=`${Math.max(8,a.R*.17)}px Instrument Sans`; x.globalAlpha=.8; x.fillText(a.t.split(' ·')[0],a.x,a.y+a.R*.34); x.globalAlpha=1; });
+    if(hover){ tip.style.opacity=1; tip.style.left=(hover.x+hover.R*.7)+'px'; tip.style.top=(hover.y-hover.R)+'px'; tip.textContent=hover.n+' — '+hover.t; } else tip.style.opacity=0;
+    requestAnimationFrame(frame); }
+  init(); addEventListener('resize',init); requestAnimationFrame(frame);
+})();
+
+/* ---------- B: particle flows supplier -> dish ---------- */
+(()=>{
+  const c=document.getElementById('cB'), L=document.getElementById('lblB');
+  const src=[['Fruver El Paisa','#c6f432'],['Carnes JR','#ff4d2e'],['Plaza 7 de agosto','#ffb000'],['Lácteos Sol','#e8efe0']];
+  const dst=[['Bandeja paisa','142'],['Ajiaco','96'],['Patacón con hogao','88'],['Pechuga gratinada','71'],['Arroz con pollo','64']];
+  const routes=[[0,0],[0,2],[0,1],[1,0],[1,3],[1,4],[2,2],[2,0],[2,1],[3,3],[3,1],[0,4]];
+  let W,H,x,P=[],mouse={x:-1,y:-1};
+  function sy(i){return H*(.36+i*.14);} function dy(i){return H*(.31+i*.105);}
+  function init(){ [W,H,x]=fit(c); L.innerHTML='';
+    src.forEach((s,i)=>{const d=document.createElement('div'); d.style.left='3%'; d.style.top=sy(i)+'px'; d.innerHTML=`<b style="color:${s[1]}">●</b> ${s[0]}`; L.appendChild(d);});
+    dst.forEach((s,i)=>{const d=document.createElement('div'); d.style.right='3%'; d.style.top=dy(i)+'px'; d.style.textAlign='right'; d.innerHTML=`${s[0]} <b style="opacity:.5">${s[1]}</b>`; L.appendChild(d);});
+    P=[]; for(let k=0;k<900;k++) P.push(spawn(true)); }
+  function spawn(r){ const ro=routes[Math.floor(Math.random()*routes.length)]; return {r:ro,t:r?Math.random():0,sp:.0012+Math.random()*.0022,o:(Math.random()-.5)*H*.05,col:src[ro[0]][1],sz:.6+Math.random()*1.6}; }
+  function pt(p,t){ const x0=W*.17,y0=sy(p.r[0]),x3=W*.83,y3=dy(p.r[1]); const x1=W*.45,x2=W*.55; const u=1-t;
+    const X=u*u*u*x0+3*u*u*t*x1+3*u*t*t*x2+t*t*t*x3, Y=u*u*u*y0+3*u*u*t*y0+3*u*t*t*y3+t*t*t*y3; const env=Math.sin(t*Math.PI); return [X,Y+p.o*env]; }
+  c.parentElement.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(); mouse={x:e.clientX-r.left,y:e.clientY-r.top};});
+  function frame(ts){ const tt=ts/1000; x.fillStyle='rgba(10,12,9,.22)'; x.fillRect(0,0,W,H);
+    // forecast river
+    x.beginPath(); for(let i=0;i<=120;i++){const X=W*i/120, Y=H*.86+Math.sin(i*.12+tt*.8)*H*.02+Math.sin(i*.05-tt*.3)*H*.025; i?x.lineTo(X,Y):x.moveTo(X,Y);} x.strokeStyle='rgba(198,244,50,.25)'; x.lineWidth=1; x.stroke();
+    x.globalCompositeOperation='lighter';
+    P.forEach((p,i)=>{ p.t+=p.sp; if(p.t>1){P[i]=spawn(false);return;} let [X,Y]=pt(p,p.t);
+      const dm=Math.hypot(X-mouse.x,Y-mouse.y); if(dm<90){ const f=(90-dm)/90; X+=(X-mouse.x)/dm*f*28; Y+=(Y-mouse.y)/dm*f*28; }
+      x.fillStyle=p.col; x.globalAlpha=.55*Math.sin(p.t*Math.PI)+.15; x.beginPath(); x.arc(X,Y,p.sz,0,7); x.fill(); });
+    x.globalAlpha=1; x.globalCompositeOperation='source-over';
+    // pulse on tomato source
+    const pr=(tt*.8)%1; x.strokeStyle=`rgba(255,77,46,${1-pr})`; x.beginPath(); x.arc(W*.17,sy(0),6+pr*26,0,7); x.stroke();
+    requestAnimationFrame(frame); }
+  init(); addEventListener('resize',init); requestAnimationFrame(frame);
+  const qs=['¿Por qué me sugieres menos pollo esta semana?','¿Qué pasa si el puente festivo sube la demanda?','Muéstrame qué platos usan más tomate'];
+  const el=document.getElementById('typedB'); let qi=0,ci=0,del=false;
+  (function type(){ const q=qs[qi]; if(!del){ci++; if(ci>q.length){del=true; return setTimeout(type,1800);} } else {ci-=2; if(ci<=0){ci=0;del=false;qi=(qi+1)%qs.length;} }
+    el.textContent='Pregúntale a mise… '+(ci?'— '+q.slice(0,ci):''); setTimeout(type,del?18:45); })();
+})();
+
+/* ---------- C: week bars ---------- */
+(()=>{
+  const w=document.getElementById('weekC'); const days=['lun','mar','mié','jue','vie','sáb','dom'];
+  const v=[[.3,.2,.1],[.35,.2,.15],[.3,.25,.1],[.45,.25,.2],[.55,.3,.25],[.7,.35,.3],[.5,.3,.2]];
+  const cols=['#0078bf','#ff48b0','#ffe800'];
+  days.forEach((d,i)=>{ const e=document.createElement('div'); e.className='day'+(i===3?' today':'');
+    let h=''; v[i].forEach((q,k)=>{ h+=`<div class="bar" style="height:${q*100}%;background:${cols[k]};margin-top:-${q*35}%;animation-delay:${i*.08+k*.1}s;opacity:${k===2?.95:.85}"></div>`; });
+    e.innerHTML=h+`<div class="d">${d}</div>`; w.appendChild(e); });
+})();
+</script>
+</body>
+</html>

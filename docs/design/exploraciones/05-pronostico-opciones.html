@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Pronóstico: opciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1b1a17; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; }
+  header.q { padding:24px 40px 16px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:28px; } header.q h1 em { color:#ff48b0; }
+  header.q p { color:#a39d90; font-size:14px; max-width:640px; margin-top:6px; line-height:1.5; }
+  .cards { display:flex; gap:10px; flex-wrap:wrap; }
+  .card { cursor:pointer; border:1px solid #3a372f; border-radius:999px; padding:10px 18px; font-size:14px; background:#23211d; transition:.25s; }
+  .card.active { background:#efe9dd; color:#16140f; }
+  .card.selected::after { content:' ✓'; color:#ff48b0; font-weight:700; }
+  .stagewrap { padding:0 40px 20px; }
+  .stage { position:relative; width:100%; aspect-ratio:16/8; border-radius:18px; overflow:hidden; background:#f6f1e7; color:#1d1a2b;
+    --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#ff48b0; --yl:#ffe800; --bl:#0078bf; --gr:#00a878; }
+  .scene { position:absolute; inset:0; padding:2vw 2.4vw; opacity:0; pointer-events:none; transition:opacity .4s; display:flex; flex-direction:column; }
+  .scene.on { opacity:1; pointer-events:auto; }
+  .notes { padding:0 40px 40px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .note { font-size:13.5px; line-height:1.55; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; opacity:.45; transition:.3s; }
+  .note.on { opacity:1; } .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#ff48b0; font-style:normal; }
+  .kick { font-family:'DM Mono'; font-size:.66vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+  h2 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2.2vw; letter-spacing:-.04em; margin-top:.3vw; }
+  h2 .pk { color:var(--pk); }
+  .box { background:var(--card); border:2px solid var(--ink); border-radius:1.2vw; box-shadow:.4vw .45vw 0 var(--ink); position:relative; }
+  .mono { font-family:'DM Mono'; }
+
+  /* A: línea limpia + tooltip */
+  #A .box { flex:1; margin-top:1vw; }
+  #A svg { position:absolute; inset:1.2vw 1.2vw 3vw; width:calc(100% - 2.4vw); height:calc(100% - 4.2vw); overflow:visible; }
+  #A .ax { position:absolute; left:1.2vw; right:1.2vw; bottom:.8vw; display:grid; grid-template-columns:repeat(14,1fr); text-align:center; font-family:'DM Mono'; font-size:.62vw; }
+  #A .ax span { position:relative; padding-top:.3vw; }
+  #A .ax span.ev::before { content:attr(data-ic); position:absolute; top:-1.4vw; left:50%; transform:translateX(-50%); font-size:.9vw; }
+  #A .ax span.t { font-weight:500; }
+  #A .ax span.t b { background:var(--ink); color:var(--paper); padding:0 .3vw; border-radius:.2vw; font-weight:500; }
+  #A .tip { position:absolute; background:var(--ink); color:var(--paper); border-radius:.8vw; padding:.7vw .9vw; font-size:.78vw; line-height:1.4; transform:translate(-50%,-115%); pointer-events:none; white-space:nowrap; box-shadow:.25vw .25vw 0 var(--pk); }
+  #A .tip b { font-family:'Bricolage Grotesque'; font-size:1.3vw; display:block; }
+  #A .tip span { color:var(--yl); }
+  #A .hint { font-family:'DM Mono'; font-size:.62vw; opacity:.6; position:absolute; right:1.2vw; top:.8vw; }
+
+  /* B: barras apiladas */
+  #B .bars { flex:1; display:grid; grid-template-columns:repeat(14,1fr); gap:.6vw; align-items:end; margin-top:1.4vw; padding-bottom:.4vw; border-bottom:3px solid var(--ink); }
+  #B .col { min-width:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:stretch; height:100%; position:relative; }
+  #B .n { text-align:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1vw; margin-bottom:.3vw; }
+  #B .base { background:var(--ink); border-radius:.35vw .35vw .2vw .2vw; opacity:.85; }
+  #B .col.fut .base { background:var(--bl); opacity:1; }
+  #B .extra { background:repeating-linear-gradient(-45deg,var(--pk) 0 .3vw,#ff48b099 .3vw .6vw); border-radius:.35vw .35vw 0 0; border:2px solid var(--pk); border-bottom:0; }
+  #B .minus { border:2px dashed var(--bl); border-bottom:0; border-radius:.35vw .35vw 0 0; }
+  #B .col.ev .base { border-radius:0 0 .2vw .2vw; }
+  #B .lbl { position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + .2vw); white-space:nowrap; font-size:.66vw; font-weight:700; background:var(--yl); border:1.5px solid var(--ink); border-radius:.4vw; padding:.15vw .45vw; box-shadow:.15vw .15vw 0 var(--ink); text-align:center; line-height:1.25; }
+  #B .lbl small { display:block; font-family:'DM Mono'; font-weight:400; font-size:.56vw; }
+  #B .days { display:grid; grid-template-columns:repeat(14,1fr); gap:.6vw; font-family:'DM Mono'; font-size:.62vw; text-align:center; margin-top:.4vw; }
+  #B .days .t b { background:var(--ink); color:var(--paper); padding:0 .3vw; border-radius:.2vw; font-weight:500; }
+  #B .leg { display:flex; gap:1.4vw; font-family:'DM Mono'; font-size:.62vw; margin-top:.8vw; opacity:.8; }
+  #B .leg i { display:inline-block; width:.9vw; height:.7vw; margin-right:.35vw; vertical-align:middle; border-radius:.15vw; }
+
+  /* C: calendario */
+  #C .cal { flex:1; display:grid; grid-template-columns:repeat(7,1fr); grid-template-rows:auto 1fr 1fr; gap:.7vw; margin-top:1.2vw; }
+  #C .wh { font-family:'DM Mono'; font-size:.62vw; text-transform:uppercase; opacity:.6; padding-left:.3vw; }
+  #C .cell { background:var(--card); border:1.5px solid #1d1a2b33; border-radius:1vw; padding:.7vw .8vw; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  #C .cell.t { border:2px solid var(--ink); box-shadow:.3vw .3vw 0 var(--ink); }
+  #C .cell.ev { background:#fff9c2; border-color:var(--ink); }
+  #C .cell.dn { background:#e3f0fa; }
+  #C .d { font-family:'DM Mono'; font-size:.62vw; opacity:.65; display:flex; justify-content:space-between; }
+  #C .num { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2.2vw; letter-spacing:-.04em; line-height:1; margin-top:.3vw; }
+  #C .num small { font-family:'DM Mono'; font-weight:400; font-size:.6vw; letter-spacing:0; opacity:.6; margin-left:.2vw; }
+  #C .meter { height:.45vw; border-radius:99px; background:#1d1a2b14; margin-top:.4vw; overflow:hidden; }
+  #C .meter i { display:block; height:100%; border-radius:99px; }
+  #C .why { margin-top:auto; font-size:.66vw; line-height:1.3; font-weight:600; }
+  #C .why small { display:block; font-family:'DM Mono'; font-weight:400; font-size:.56vw; opacity:.7; }
+  #C .heat { position:absolute; right:.6vw; top:.6vw; }
+</style>
+</head>
+<body>
+<header class="q">
+  <div>
+    <h1>Pronóstico: ¿cuál <em>se entiende</em> mejor?</h1>
+    <p>Son tres formas de mostrar lo mismo: cuántos platos vas a vender cada día de las próximas dos semanas y qué eventos lo cambian. Todas hablan en <b>platos</b>, no en porcentajes. El panel de eventos a la derecha se mantiene igual en las tres.</p>
+  </div>
+  <div class="cards">
+    <div class="card active" data-choice="A-linea-limpia" onclick="pick(this,'A')">A · Línea limpia</div>
+    <div class="card" data-choice="B-barras" onclick="pick(this,'B')">B · Barras por día</div>
+    <div class="card" data-choice="C-calendario" onclick="pick(this,'C')">C · Calendario</div>
+  </div>
+</header>
+<div class="stagewrap"><div class="stage">
+  <section class="scene on" id="A">
+    <div class="kick">Pronóstico · próximas 2 semanas</div><h2>Lo que viene, <span class="pk">plato a plato</span>.</h2>
+    <div class="box"><div class="hint">pasa el mouse sobre un día</div><svg id="svgA"></svg><div class="ax" id="axA"></div><div class="tip" id="tipA" style="display:none"></div></div>
+  </section>
+  <section class="scene" id="B">
+    <div class="kick">Pronóstico · próximas 2 semanas</div><h2>Lo que viene, <span class="pk">plato a plato</span>.</h2>
+    <div class="leg"><span><i style="background:var(--bl)"></i>día normal (pronóstico)</span><span><i style="background:repeating-linear-gradient(-45deg,#ff48b0 0 3px,#ff48b099 3px 6px)"></i>platos extra por un evento</span></div>
+    <div class="bars" id="barsB"></div><div class="days" id="daysB"></div>
+  </section>
+  <section class="scene" id="C">
+    <div class="kick">Pronóstico · próximas 2 semanas</div><h2>Lo que viene, <span class="pk">día a día</span>.</h2>
+    <div class="cal" id="calC"></div>
+  </section>
+</div></div>
+<div class="notes">
+  <div class="note on" id="nA"><b>A · Línea limpia</b>Como la versión anterior, pero <i>sin nada flotando</i>. Solo quedan dos líneas: la real y el pronóstico. Los días con evento llevan un ícono pequeño junto a la fecha. Al pasar el mouse sobre un día aparece la explicación en palabras (“Sábado 26: 104 platos, 21 más de lo normal por el partido”). La gráfica queda limpia y el detalle aparece solo cuando lo buscas.</div>
+  <div class="note" id="nB"><b>B · Barras por día</b>Cada día es una barra con su número encima. Si hay un evento, la barra lleva <i>un pedazo rosa rayado arriba: esos son los platos extra</i>, con una etiqueta que dice cuántos y por qué. Se lee de un vistazo y la causa queda pegada al efecto.</div>
+  <div class="note" id="nC"><b>C · Calendario</b>No hay gráfica: son <i>dos semanas en calendario</i>. Cada día muestra los platos esperados en grande, una barrita de qué tan lleno viene y, si aplica, el evento escrito con los platos que suma. Es la opción más fácil de leer para alguien no técnico, pero la menos “gráfica”.</div>
+</div>
+<script>
+const WD=['jue','vie','sáb','dom','lun','mar','mié'], WDL=['Jueves','Viernes','Sábado','Domingo','Lunes','Martes','Miércoles'];
+const PAT=[1,1.15,1.3,1.1,.85,.9,.95];
+const EV={2:{ic:'⚽',n:'Partido Colombia–Brasil',sh:'Partido',m:.25},4:{ic:'🏖️',n:'Lunes festivo',sh:'Festivo',m:.15},9:{ic:'🍽️',n:'Feria gastronómica',sh:'Feria',m:.2}};
+const base=Array.from({length:14},(_,d)=>Math.round(64*PAT[d%7]));
+const fut=base.map((b,d)=>EV[d]?Math.round(b*(1+EV[d].m)):b);
+const past=[62,70,80,69,55,59,61];
+const date=d=>{const n=24+d; return n>30?n-30:n;};
+function pick(el,s){ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active','selected')); el.classList.add('active','selected');
+  document.querySelectorAll('.scene').forEach(x=>x.classList.toggle('on',x.id===s)); document.querySelectorAll('.note').forEach(x=>x.classList.toggle('on',x.id==='n'+s));
+  if(window.brainstorm) window.brainstorm.choice(el.dataset.choice); }
+
+/* A */
+(()=>{ const svg=document.getElementById('svgA'), ax=document.getElementById('axA'), tip=document.getElementById('tipA');
+  const W=1000,H=300, mx=135, mn=40, X=i=>(i+.5)/14*W, Y=v=>H-(v-mn)/(mx-mn)*H;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('preserveAspectRatio','none');
+  const L=(a)=>a.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join(' ');
+  svg.innerHTML=`<path d="${L(past)}" transform="translate(${-7/14*W},0)" fill="none" stroke="#1d1a2b" stroke-width="2.5" opacity="0" />
+   <path d="${L(fut)} L${X(13)},${H} L${X(0)},${H} Z" fill="#ff48b0" opacity=".08"/>
+   <path d="${L(fut)}" fill="none" stroke="#ff48b0" stroke-width="3.5" vector-effect="non-scaling-stroke"/>
+   ${fut.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="5" fill="${EV[i]?'#ffe800':'#fffdf8'}" stroke="${EV[i]?'#1d1a2b':'#ff48b0'}" stroke-width="2" vector-effect="non-scaling-stroke"/>`).join('')}
+   ${fut.map((v,i)=>`<rect class="hz" data-i="${i}" x="${i/14*W}" y="0" width="${W/14}" height="${H}" fill="transparent"/>`).join('')}`;
+  ax.innerHTML=fut.map((_,i)=>`<span class="${EV[i]?'ev':''} ${i===0?'t':''}" data-ic="${EV[i]?EV[i].ic:''}">${i===0?'<b>hoy</b>':WD[i%7]+' '+date(i)}</span>`).join('');
+  const show=i=>{ const box=svg.getBoundingClientRect(), host=svg.parentElement.getBoundingClientRect(); tip.style.display='block';
+    tip.style.left=(box.left-host.left+X(i)/W*box.width)+'px'; tip.style.top=(box.top-host.top+Y(fut[i])/H*box.height)+'px';
+    tip.innerHTML=`${WDL[i%7]} ${date(i)}<b>${fut[i]} platos</b>${EV[i]?`<span>${EV[i].ic} ${fut[i]-base[i]} más de lo normal por ${EV[i].n.toLowerCase()}</span>`:'un día normal'}`; };
+  svg.querySelectorAll('.hz').forEach(r=>{ r.onmouseenter=()=>show(+r.dataset.i); });
+  svg.onmouseleave=()=>show(2); setTimeout(()=>show(2),300);
+})();
+
+/* B */
+(()=>{ const b=document.getElementById('barsB'), dd=document.getElementById('daysB'), mx=110;
+  b.innerHTML=fut.map((v,i)=>{ const e=EV[i]; return `<div class="col fut ${e?'ev':''}"><div class="n">${v}</div>${e?`<div class="lbl">${e.ic} +${v-base[i]} platos<small>${e.sh}</small></div>`:''}${e?`<div class="extra" style="height:${(v-base[i])/mx*100}%"></div>`:''}<div class="base" style="height:${base[i]/mx*100}%"></div></div>`; }).join('');
+  dd.innerHTML=fut.map((_,i)=>`<span class="${i===0?'t':''}">${i===0?'<b>hoy</b>':WD[i%7]+' '+date(i)}</span>`).join('');
+  b.querySelectorAll('.col').forEach((c,i)=>{ const l=c.querySelector('.lbl'); if(l){ c.querySelector('.n').after(l); l.style.position='relative'; l.style.bottom='auto'; l.style.left='auto'; l.style.transform='none'; l.style.margin='0 auto .4vw'; l.style.width='max-content'; l.style.maxWidth='none'; } });
+})();
+
+/* C */
+(()=>{ const c=document.getElementById('calC'); const mx=Math.max(...fut);
+  c.innerHTML=WD.map(w=>`<div class="wh">${w}</div>`).join('')+fut.map((v,i)=>{ const e=EV[i], lvl=v/mx;
+    return `<div class="cell ${i===0?'t':''} ${e?'ev':''}"><div class="d"><span>${i===0?'HOY · ':''}${WD[i%7]} ${date(i)}</span>${e?`<span class="heat">${e.ic}</span>`:''}</div>
+      <div class="num">${v}<small>platos</small></div><div class="meter"><i style="width:${lvl*100}%;background:${e?'var(--pk)':lvl>.8?'var(--ink)':'var(--bl)'}"></i></div>
+      ${e?`<div class="why">+${v-base[i]} platos<small>${e.n}</small></div>`:`<div class="why" style="opacity:.45;font-weight:400"><small>${v>=80?'día fuerte':v<60?'día tranquilo':'día normal'}</small></div>`}</div>`; }).join('');
+})();
+</script>
+</body>
+</html>

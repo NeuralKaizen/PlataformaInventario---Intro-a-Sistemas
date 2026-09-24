@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Barra lateral</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1b1a17; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; }
+  header.q { padding:28px 40px 18px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:30px; }
+  header.q h1 em { color:#ff48b0; }
+  header.q p { color:#a39d90; font-size:14px; max-width:660px; margin-top:6px; line-height:1.5; }
+  .cards { display:flex; gap:10px; flex-wrap:wrap; }
+  .card { cursor:pointer; border:1px solid #3a372f; border-radius:999px; padding:10px 18px 10px 12px; display:flex; align-items:center; gap:10px; font-size:14px; background:#23211d; transition:.25s; }
+  .card .dot { width:22px; height:22px; border-radius:50%; }
+  .card.active { background:#efe9dd; color:#16140f; }
+  .card.selected::after { content:'✓ elegida'; font-size:11px; padding:2px 8px; border-radius:99px; background:#ff48b0; color:#fff; }
+  .stagewrap { padding:0 40px 20px; }
+  .stage { position:relative; width:100%; aspect-ratio:16/9.2; max-height:78vh; border-radius:18px; overflow:hidden; box-shadow:0 30px 80px -20px #000a; }
+  .notes { padding:0 40px 40px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .note { font-size:13.5px; line-height:1.55; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; opacity:.45; transition:.3s; }
+  .note.on { opacity:1; } .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#ff48b0; font-style:normal; }
+
+  /* ===== theme: riso flúor ===== */
+  .scene { --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#ff48b0; --yl:#ffe800; --bl:#0078bf; --or:#ff6c2f;
+    position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .6s; background:var(--paper); color:var(--ink); display:flex; font-family:'Instrument Sans'; }
+  .scene.on { opacity:1; pointer-events:auto; }
+  .grain { position:absolute; inset:0; opacity:.28; mix-blend-mode:multiply; pointer-events:none; z-index:20;
+     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .ht { position:absolute; inset:0; pointer-events:none; background-image:radial-gradient(var(--bl) 1px, transparent 1.3px); background-size:10px 10px; opacity:.06; }
+
+  /* ---------- sidebar building blocks (shared) ---------- */
+  .side { position:relative; z-index:6; display:flex; flex-direction:column; }
+  .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2.2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; }
+  .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.7vw; height:.7vw; border-radius:50%; background:var(--pk); }
+  .nav { list-style:none; display:flex; flex-direction:column; gap:.25vw; margin-top:2vw; }
+  .nav li { display:flex; align-items:center; gap:.75vw; font-size:1.02vw; font-weight:500; padding:.55vw .7vw; border-radius:.7vw; cursor:pointer; transition:.2s; position:relative; }
+  .nav li .ic { width:1.05vw; height:1.05vw; flex:none; mix-blend-mode:multiply; }
+  .nav li .ct { margin-left:auto; font-family:'DM Mono'; font-size:.64vw; padding:.05vw .4vw; border-radius:99px; background:var(--pk); color:#fff; }
+  .ic.c { border-radius:50%; } .ic.s { border-radius:.2vw; } .ic.t { clip-path:polygon(50% 0,100% 100%,0 100%); } .ic.h { border-radius:50% 50% 0 0; } .ic.d { transform:rotate(45deg) scale(.8); border-radius:.15vw; } .ic.p { border-radius:50% 50% 50% 0; }
+  .sect { font-family:'DM Mono'; font-size:.6vw; letter-spacing:.14em; text-transform:uppercase; opacity:.5; margin-bottom:.6vw; }
+  .soon .it { display:flex; align-items:center; gap:.6vw; font-size:.78vw; margin-bottom:.5vw; }
+  .soon .it .nm { width:4.4vw; }
+  .soon .track { flex:1; height:.45vw; border-radius:99px; background:color-mix(in srgb, currentColor 12%, transparent); overflow:hidden; }
+  .soon .track i { display:block; height:100%; border-radius:99px; animation:drain 3s ease-in-out infinite alternate; }
+  @keyframes drain { from { filter:brightness(1);} to { filter:brightness(1.15); transform:scaleX(.94); transform-origin:left; } }
+  .soon .it .dd { font-family:'DM Mono'; font-size:.64vw; width:2.2vw; text-align:right; }
+  .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.85vw; font-weight:600; padding:.75vw .9vw; border-radius:99px; cursor:pointer; transition:.2s; }
+  .askbtn .orb { width:1.1vw; height:1.1vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 4s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg);} }
+  .who { display:flex; align-items:center; gap:.6vw; font-size:.72vw; line-height:1.3; }
+  .who .av { width:2vw; height:2vw; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.8vw; }
+  .who b { display:block; font-weight:700; font-size:.8vw; }
+  .who span { opacity:.6; }
+  .grow { flex:1; }
+
+  /* ===== S1 · tarjeta sticker ===== */
+  #S1 .side { width:18.5%; margin:1.3vw 0 1.3vw 1.3vw; padding:1.6vw 1.2vw 1.2vw; background:var(--card); border:2px solid var(--ink); border-radius:1.2vw; box-shadow:.4vw .45vw 0 var(--ink); }
+  #S1 .nav li:hover { background:color-mix(in srgb, var(--yl) 45%, transparent); }
+  #S1 .nav li.cur { background:var(--yl); font-weight:700; }
+  #S1 .nav li.cur::after { content:''; position:absolute; right:-1.35vw; top:50%; width:1vw; height:2px; background:var(--ink); }
+  #S1 .soon { margin-top:1.4vw; padding-top:1.1vw; border-top:1.5px dashed color-mix(in srgb, var(--ink) 30%, transparent); }
+  #S1 .askbtn { background:var(--ink); color:var(--paper); margin:.9vw 0; }
+  #S1 .askbtn:hover { background:var(--pk); }
+  #S1 .who .av { background:var(--pk); color:#fff; }
+
+  /* ===== S2 · barra de tinta ===== */
+  #S2 .side { width:19%; padding:2.2vw 1.4vw 1.4vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; }
+  #S2 .brand::after { background:var(--yl); }
+  #S2 .nav li { opacity:.62; }
+  #S2 .nav li .ic { mix-blend-mode:normal; }
+  #S2 .nav li:hover { opacity:1; background:#ffffff10; }
+  #S2 .nav li.cur { opacity:1; background:var(--pk); color:#fff; font-weight:700; box-shadow:.25vw .25vw 0 var(--yl); }
+  #S2 .nav li.cur .ic { background:#fff !important; }
+  #S2 .soon { margin-top:1.4vw; padding:1vw; border-radius:1vw; background:#ffffff0d; }
+  #S2 .askbtn { background:var(--yl); color:var(--ink); margin:.9vw 0; }
+  #S2 .askbtn:hover { transform:translateY(-2px); box-shadow:0 .3vw 0 var(--pk); }
+  #S2 .who .av { background:var(--bl); color:#fff; }
+  #S2 .pulse { position:relative; }
+  #S2 .pulse::before { content:''; position:absolute; left:-.1vw; top:50%; width:.5vw; height:.5vw; margin-top:-.25vw; border-radius:50%; background:var(--pk); animation:ping 1.6s infinite; }
+  @keyframes ping { 0%{ box-shadow:0 0 0 0 #ff48b0aa;} 100%{ box-shadow:0 0 0 .8vw #ff48b000;} }
+
+  /* ===== S3 · fichero con pestañas ===== */
+  #S3 { background:color-mix(in srgb, var(--paper) 88%, var(--ink)); }
+  #S3 .side { width:17%; padding:2vw 0 1.4vw 1.4vw; }
+  #S3 .nav { gap:.35vw; }
+  #S3 .nav li { border-radius:.8vw 0 0 .8vw; padding:.7vw .9vw; background:color-mix(in srgb, var(--tab) 22%, var(--paper)); margin-right:-.2vw; font-weight:600; }
+  #S3 .nav li:hover { background:color-mix(in srgb, var(--tab) 45%, var(--paper)); transform:translateX(-.3vw); }
+  #S3 .nav li.cur { background:var(--card); margin-right:-1vw; padding-right:1.6vw; z-index:2; box-shadow:-.3vw .3vw 0 var(--tab); }
+  #S3 .nav li .ic { mix-blend-mode:normal; }
+  #S3 .soon { margin:1.4vw 1.2vw 0 0; }
+  #S3 .askbtn { background:var(--card); border:2px solid var(--ink); margin:.9vw 1.2vw .9vw 0; box-shadow:.25vw .25vw 0 var(--pk); }
+  #S3 .who .av { background:var(--yl); color:var(--ink); border:2px solid var(--ink); }
+  #S3 .main { margin:1.2vw 1.2vw 1.2vw 0; background:var(--paper); border-radius:1.4vw; box-shadow:0 1vw 3vw -1.5vw #1d1a2b66; overflow:hidden; }
+
+  /* ---------- main (from hybrid, blobs moved away from sidebar) ---------- */
+  .main { position:relative; flex:1; z-index:2; }
+  .blob { position:absolute; border-radius:50%; mix-blend-mode:multiply; animation:float 10s ease-in-out infinite alternate; z-index:0; }
+  @keyframes float { to { transform:translate(1.6vw,-1.2vw) scale(1.07);} }
+  .title { position:absolute; left:4%; top:9%; width:43%; z-index:3; }
+  .kick { font-family:'DM Mono'; font-size:.7vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+  .title h2 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.8vw; line-height:.95; letter-spacing:-.045em; margin-top:.8vw; }
+  .title h2 .hl { background:var(--yl); padding:0 .35vw; mix-blend-mode:multiply; }
+  .title h2 .pk { color:var(--pk); }
+  .title p { font-family:'DM Mono'; font-size:.74vw; margin-top:1vw; max-width:24vw; line-height:1.6; opacity:.8; }
+  .rail { position:absolute; right:3%; top:9%; width:49%; height:3px; background:var(--ink); border-radius:2px; z-index:3; }
+  .tickets { position:absolute; right:3%; top:9%; width:49%; display:flex; justify-content:space-around; z-index:4; }
+  .tk { width:9.6vw; background:var(--card); padding:1vw .85vw 1.1vw; font-family:'DM Mono'; font-size:.68vw; transform-origin:top center; animation:swing 3.6s ease-in-out infinite alternate; position:relative; cursor:pointer; box-shadow:.35vw .45vw 0 var(--ink); transition:translate .2s; }
+  .tk:hover { translate:0 .5vw; animation-play-state:paused; }
+  .tk::before { content:''; position:absolute; top:-.7vw; left:50%; width:1.4vw; height:1.1vw; margin-left:-.7vw; background:var(--ink); border-radius:.2vw; }
+  .tk:nth-child(2){animation-delay:-1.3s;margin-top:.6vw;} .tk:nth-child(3){animation-delay:-2.2s;} .tk:nth-child(4){animation-delay:-.6s;margin-top:.3vw;}
+  @keyframes swing { from{transform:rotate(-2.2deg);} to{transform:rotate(2.2deg);} }
+  .tk h5 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.1vw; letter-spacing:-.02em; margin-bottom:.5vw; line-height:1; }
+  .tk .li { display:flex; justify-content:space-between; border-bottom:1px dotted #1d1a2b55; padding:.25vw 0; }
+  .tk .stamp { margin-top:.6vw; display:inline-block; border:2px solid; padding:.1vw .5vw; transform:rotate(-6deg); font-weight:500; }
+  .tk .zig { position:absolute; left:0; right:0; bottom:-.6vw; height:.6vw; background:linear-gradient(-45deg,transparent .3vw,var(--card) 0) 0 0/.6vw .6vw, linear-gradient(45deg,transparent .3vw,var(--card) 0) 0 0/.6vw .6vw; }
+  .sticker { position:absolute; z-index:5; left:37%; top:46%; width:7.2vw; height:7.2vw; border-radius:50%; background:var(--yl); display:flex; align-items:center; justify-content:center; text-align:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.9vw; line-height:1.05; transform:rotate(-12deg); animation:wob 4.5s ease-in-out infinite; box-shadow:.3vw .3vw 0 var(--pk); }
+  .sticker big { font-size:1.8vw; display:block; letter-spacing:-.04em; }
+  @keyframes wob { 50% { transform:rotate(-4deg) scale(1.05);} }
+  .weekhead { position:absolute; left:4%; right:3%; bottom:36%; display:flex; justify-content:space-between; align-items:baseline; z-index:3; }
+  .weekhead h4 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.15vw; }
+  .legend { display:flex; gap:1vw; font-family:'DM Mono'; font-size:.64vw; opacity:.75; }
+  .legend i { display:inline-block; width:.6vw; height:.6vw; border-radius:50%; margin-right:.3vw; vertical-align:middle; }
+  .week { position:absolute; left:4%; right:3%; bottom:6%; height:28%; z-index:3; display:flex; gap:.8vw; align-items:flex-end; }
+  .day { flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%; position:relative; cursor:pointer; }
+  .stack { position:relative; flex:1; }
+  .bar { position:absolute; left:0; right:0; bottom:0; border-radius:1vw 1vw .3vw .3vw; mix-blend-mode:multiply; transform-origin:bottom; animation:grow 1.2s cubic-bezier(.2,1.4,.4,1) both; transition:transform .3s; }
+  .bar:nth-child(2){ left:12%; right:12%; } .bar:nth-child(3){ left:26%; right:26%; }
+  .day:hover .bar { transform:scaleY(1.06); }
+  @keyframes grow { from { transform:scaleY(0);} }
+  .day .d { font-family:'DM Mono'; font-size:.68vw; margin-top:.45vw; text-transform:uppercase; display:flex; justify-content:space-between; }
+  .day .d em { font-style:normal; opacity:0; transition:.2s; }
+  .day:hover .d em { opacity:.7; }
+  .day.today .d span { background:var(--ink); color:var(--paper); padding:0 .4vw; }
+  .day.fest::after { content:'festivo'; position:absolute; top:0; left:50%; transform:translateX(-50%) rotate(-4deg); font-family:'DM Mono'; font-size:.58vw; background:var(--card); border:1px solid var(--ink); padding:.05vw .4vw; }
+</style>
+</head>
+<body>
+<header class="q">
+  <div>
+    <h1>La barra lateral necesita <em>más presencia</em></h1>
+    <p>Las tres versiones usan las tintas flúor. En todas, los blobs se alejaron de la barra, que ahora tiene íconos riso y un bloque útil para el hueco de abajo: <b>“Se acaba pronto”</b> (los insumos con menos días de stock) y el acceso al <b>asistente</b>. Lo que cambia es cómo se separa la barra del contenido.</p>
+  </div>
+  <div class="cards">
+    <div class="card active" data-choice="S1-tarjeta-sticker" onclick="pick(this,'S1')"><span class="dot" style="background:#fffdf8;border:2px solid #1d1a2b;box-shadow:2px 2px 0 #1d1a2b"></span>1 · Tarjeta sticker</div>
+    <div class="card" data-choice="S2-barra-de-tinta" onclick="pick(this,'S2')"><span class="dot" style="background:#1d1a2b;box-shadow:inset -6px 0 0 #ff48b0"></span>2 · Barra de tinta</div>
+    <div class="card" data-choice="S3-fichero" onclick="pick(this,'S3')"><span class="dot" style="background:linear-gradient(#ff48b0 0 33%,#ffe800 0 66%,#0078bf 0)"></span>3 · Fichero</div>
+  </div>
+</header>
+<div class="stagewrap"><div class="stage" id="stage"></div></div>
+<div class="notes">
+  <div class="note on" id="nS1"><b>1 · Tarjeta sticker</b>La barra es una <i>tarjeta flotante</i> con borde y sombra dura, del mismo lenguaje que las comandas. La sección activa lleva un resaltado amarillo, como marcado con resaltador. Es la opción más coherente con el resto de la página.</div>
+  <div class="note" id="nS2"><b>2 · Barra de tinta</b>Un bloque sólido de <i>tinta oscura</i> con la sección activa en rosa flúor. Es la que más contraste tiene: la barra se ve de inmediato desde el fondo del salón y ancla toda la página. El bloque “se acaba pronto” late en rosa.</div>
+  <div class="note" id="nS3"><b>3 · Fichero</b>Funciona como un <i>fichero de recetas</i>: cada sección es una pestaña de color, y la activa se une a la hoja de contenido. Es la más original y le da a la navegación una lógica física, pero ocupa algo más de espacio visual.</div>
+</div>
+
+<template id="tpl">
+  <div class="grain"></div><div class="ht"></div>
+  <aside class="side">
+    <div class="brand">mise</div>
+    <ul class="nav">
+      <li class="cur" style="--tab:var(--pk)"><span class="ic c" style="background:var(--pk)"></span>Panorama</li>
+      <li style="--tab:var(--or)"><span class="ic s" style="background:var(--or)"></span>Despensa<span class="ct">3</span></li>
+      <li style="--tab:var(--yl)"><span class="ic t" style="background:var(--yl)"></span>Planes de compra</li>
+      <li style="--tab:var(--bl)"><span class="ic h" style="background:var(--bl)"></span>Pronóstico</li>
+      <li style="--tab:var(--pk)"><span class="ic d" style="background:var(--pk)"></span>Proveedores</li>
+      <li style="--tab:var(--bl)"><span class="ic p" style="background:var(--bl)"></span>Recetas</li>
+    </ul>
+    <div class="soon">
+      <div class="sect pulse">&nbsp;&nbsp;&nbsp;Se acaba pronto</div>
+      <div class="it"><span class="nm">Cilantro</span><span class="track"><i style="width:14%;background:var(--pk)"></i></span><span class="dd">1 d</span></div>
+      <div class="it"><span class="nm">Plátano</span><span class="track"><i style="width:22%;background:var(--pk)"></i></span><span class="dd">1 d</span></div>
+      <div class="it"><span class="nm">Tomate</span><span class="track"><i style="width:34%;background:var(--or)"></i></span><span class="dd">2 d</span></div>
+    </div>
+    <div class="grow"></div>
+    <div class="askbtn"><span class="orb"></span>Pregúntale a mise</div>
+    <div class="who"><span class="av">LO</span><div><b>La Olla de Nico</b><span>Chapinero · 64 platos/día</span></div></div>
+  </aside>
+  <main class="main">
+    <div class="blob" style="width:13vw;height:13vw;background:var(--bl);right:20%;top:-6vw;opacity:.18;animation-delay:-4s"></div>
+    <div class="blob" style="width:9vw;height:9vw;background:var(--yl);left:30%;top:11vw;opacity:.5;animation-delay:-7s"></div>
+    <div class="blob" style="width:16vw;height:16vw;background:var(--pk);right:-5vw;bottom:10vw;opacity:.2"></div>
+    <div class="title">
+      <div class="kick">Jueves 24 · semana 39</div>
+      <h2>Hoy se piden <span class="hl">3 cosas</span>, lo demás <span class="pk">aguanta.</span></h2>
+      <p>Cada comanda es un pedido sugerido a partir de tus ventas y del tiempo de entrega de cada proveedor. Tócala para editarla.</p>
+    </div>
+    <div class="rail"></div>
+    <div class="tickets">
+      <div class="tk"><h5>Fruver El Paisa</h5><div class="li"><span>tomate</span><span>14 kg</span></div><div class="li"><span>cilantro</span><span>1.2 kg</span></div><div class="li"><span>cebolla</span><span>6 kg</span></div><span class="stamp" style="color:var(--pk)">PEDIR HOY</span><div class="zig"></div></div>
+      <div class="tk"><h5>Plaza 7 de agosto</h5><div class="li"><span>plátano</span><span>9 kg</span></div><div class="li"><span>yuca</span><span>5 kg</span></div><span class="stamp" style="color:var(--pk)">MAÑANA</span><div class="zig"></div></div>
+      <div class="tk"><h5>Carnes JR</h5><div class="li"><span>pechuga</span><span>18 kg</span></div><div class="li"><span>res molida</span><span>7 kg</span></div><span class="stamp" style="color:var(--bl)">JUEVES</span><div class="zig"></div></div>
+      <div class="tk"><h5>Lácteos Sol</h5><div class="li"><span>queso</span><span>4 kg</span></div><div class="li"><span>crema</span><span>3 L</span></div><span class="stamp" style="color:var(--ink)">SÁBADO</span><div class="zig"></div></div>
+    </div>
+    <div class="sticker"><div><big>−18%</big>vs semana<br>pasada</div></div>
+    <div class="weekhead"><h4>Demanda esperada de la semana</h4>
+      <div class="legend"><span><i style="background:var(--bl)"></i>proteínas</span><span><i style="background:var(--pk)"></i>verduras</span><span><i style="background:var(--yl)"></i>granos</span></div></div>
+    <div class="week"></div>
+  </main>
+</template>
+
+<script>
+const stage=document.getElementById('stage'), tpl=document.getElementById('tpl');
+['S1','S2','S3'].forEach((id,i)=>{ const s=document.createElement('section'); s.className='scene'+(i?'':' on'); s.id=id; s.appendChild(tpl.content.cloneNode(true)); stage.appendChild(s);
+  const w=s.querySelector('.week'); const days=['lun','mar','mié','jue','vie','sáb','dom'];
+  const v=[[.42,.3,.18],[.48,.34,.2],[.44,.3,.22],[.58,.4,.28],[.72,.5,.34],[.94,.66,.44],[.66,.46,.3]]; const pl=[48,52,50,64,78,102,71];
+  days.forEach((d,k)=>{ const e=document.createElement('div'); e.className='day'+(k===3?' today':'')+(k===6?' fest':'');
+    e.innerHTML=`<div class="stack">${v[k].map((q,j)=>`<div class="bar" style="height:${q*100}%;background:var(--${['bl','pk','yl'][j]});opacity:${j===2?.95:.85};animation-delay:${k*.07+j*.1}s"></div>`).join('')}</div><div class="d"><span>${d}</span><em>${pl[k]} platos</em></div>`; w.appendChild(e); });
+  s.querySelectorAll('.nav li').forEach(li=>li.onclick=()=>{ s.querySelectorAll('.nav li').forEach(x=>x.classList.remove('cur')); li.classList.add('cur'); });
+  s.querySelectorAll('.tk').forEach(t=>t.onclick=()=>{ const st=t.querySelector('.stamp'); st.dataset.o=st.dataset.o||st.textContent; t.classList.toggle('done'); st.textContent=t.classList.contains('done')?'✓ PEDIDO':st.dataset.o; });
+});
+function pick(el,s){
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active','selected')); el.classList.add('active','selected');
+  document.querySelectorAll('.scene').forEach(x=>x.classList.toggle('on',x.id===s));
+  document.querySelectorAll('.note').forEach(x=>x.classList.toggle('on',x.id==='n'+s));
+  if(window.brainstorm) window.brainstorm.choice(el.dataset.choice);
+}
+</script>
+</body>
+</html>
