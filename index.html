@@ -354,13 +354,11 @@
   .pz-bar input { flex:1; border:0; outline:none; background:transparent; font-family:'Instrument Sans'; font-size:.95vw; }
   .pz-bar button { width:2.5vw; height:2.5vw; border-radius:50%; border:0; background:var(--pk); color:#fff; font-size:1.05vw; cursor:pointer; }
 
-  /* ======== MISE (asistente) ======== */
-  .mise-ov { position:absolute; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .35s, backdrop-filter .35s; backdrop-filter:blur(0px); background:rgba(246,241,231,0); }
-  .mise-ov.on { opacity:1; pointer-events:auto; backdrop-filter:blur(14px) saturate(1.15); background:rgba(29,26,43,.18); }
-  .mise { width:46vw; height:86%; background:var(--card); border:2px solid var(--ink); border-radius:1.6vw; box-shadow:.55vw .6vw 0 var(--pk); display:flex; flex-direction:column; overflow:hidden; transform:translateY(2vw) scale(.97); transition:transform .45s cubic-bezier(.3,1.4,.5,1); position:relative; }
-  .mise-ov.on .mise { transform:none; }
-  .mise::before { content:''; position:absolute; width:22vw; height:22vw; border-radius:50%; background:var(--yl); opacity:.35; right:-8vw; top:-10vw; mix-blend-mode:multiply; pointer-events:none; }
-  .mise::after { content:''; position:absolute; width:16vw; height:16vw; border-radius:50%; background:var(--pk); opacity:.14; left:-6vw; bottom:-6vw; mix-blend-mode:multiply; pointer-events:none; }
+  /* ======== MISE (panel lateral estilo VS Code) ======== */
+  .mise { position:relative; z-index:20; width:0; min-width:0; flex:none; background:var(--card); border-right:2px solid transparent; display:flex; flex-direction:column; overflow:hidden; transition:width .38s cubic-bezier(.4,0,.2,1), border-color .38s, box-shadow .38s; }
+  .mise.on { width:22vw; min-width:220px; border-right-color:var(--ink); box-shadow:.4vw 0 0 var(--pk); }
+  .mise::before { content:''; position:absolute; width:22vw; height:22vw; border-radius:50%; background:var(--yl); opacity:.22; right:-8vw; top:-10vw; mix-blend-mode:multiply; pointer-events:none; }
+  .mise::after { content:''; position:absolute; width:16vw; height:16vw; border-radius:50%; background:var(--pk); opacity:.10; left:-6vw; bottom:-6vw; mix-blend-mode:multiply; pointer-events:none; }
   .mhead { display:flex; align-items:center; gap:.9vw; padding:1.2vw 1.4vw .9vw; border-bottom:1.5px dashed #1d1a2b33; position:relative; z-index:1; }
   .mhead .orb { width:2.6vw; height:2.6vw; box-shadow:0 0 0 .3vw #fffdf8, 0 0 0 .45vw var(--ink); }
   .mhead h3 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.6vw; letter-spacing:-.04em; line-height:1; }
@@ -388,7 +386,22 @@
   .mform button { width:2.3vw; height:2.3vw; border-radius:50%; border:0; background:var(--pk); color:#fff; font-size:1vw; cursor:pointer; transition:.15s; }
   .mform button:hover { transform:rotate(-15deg) scale(1.08); }
   .askbtn { cursor:pointer; transition:.2s; } .askbtn:hover { transform:translateY(-2px); box-shadow:0 .25vw 0 var(--pk); }
+  .askbtn.open { background:var(--ink); color:var(--paper); box-shadow:.25vw .25vw 0 var(--pk); }
+  .askbtn.open .orb { box-shadow:0 0 0 .18vw var(--paper); }
   .askbtn kbd { margin-left:auto; font-family:'DM Mono'; font-size:.55vw; opacity:.55; }
+  /* internos del panel lateral: usar % en vez de vw para que escalen bien al ancho del aside */
+  .mise .mhead { padding:4.5% 5% 3.5%; }
+  .mise .mhead h3 { font-size:clamp(14px, 1.6vw, 22px); }
+  .mise .mhead .orb { width:clamp(20px,2.6vw,34px); height:clamp(20px,2.6vw,34px); }
+  .mise .mhead .ctx { font-size:clamp(9px,.6vw,11px); }
+  .mise .mhead .x { width:clamp(18px,2vw,26px); height:clamp(18px,2vw,26px); }
+  .mise .msgs { padding:4% 5%; gap:3%; }
+  .mise .msg { font-size:clamp(11px,.82vw,13px); max-width:92%; }
+  .mise .sugs { padding:0 5% 2.5%; gap:2%; }
+  .mise .sug { font-size:clamp(10px,.68vw,12px); }
+  .mise .mform { margin:0 5% 5%; padding:2% 2% 2% 5%; }
+  .mise .mform input { font-size:clamp(11px,.85vw,13px); }
+  .mise .mform button { width:clamp(24px,2.3vw,30px); height:clamp(24px,2.3vw,30px); }
 
   /* ---- ajustar stock inline ---- */
   .kpis-edit { background:var(--paper); border-radius:.8vw; padding:.7vw .8vw; display:flex; flex-direction:column; gap:.5vw; }
@@ -424,6 +437,13 @@
     </div>
     <div class="askbtn" id="askOpen"><span class="orb"></span>Pregúntale a mise<kbd>⌘K</kbd></div>
     <div class="who"><span class="av">LO</span><div><b>La Olla de Nico</b><span>Chapinero · 64 platos/día</span></div></div>
+  </aside>
+
+  <aside class="mise" id="mise">
+    <div class="mhead"><span class="orb"></span><div><h3>mise</h3><div class="ctx">Estás en <b id="mCtx">Panorama</b> · conozco tus ventas, tu despensa y tus pedidos</div></div><kbd>esc</kbd><div class="x" id="mClose">✕</div></div>
+    <div class="msgs" id="msgs"></div>
+    <div class="sugs" id="sugs"></div>
+    <form class="mform" id="mForm"><input id="mIn" placeholder="Escríbele a mise…" autocomplete="off"><button type="submit">↑</button></form>
   </aside>
 
   <main class="main">
@@ -517,14 +537,6 @@
     </section>
     <div class="toast" id="toast"></div>
   </main>
-  <div class="mise-ov" id="miseOv">
-    <div class="mise">
-      <div class="mhead"><span class="orb"></span><div><h3>mise</h3><div class="ctx">Estás en <b id="mCtx">Panorama</b> · conozco tus ventas, tu despensa y tus pedidos</div></div><kbd>esc</kbd><div class="x" id="mClose">✕</div></div>
-      <div class="msgs" id="msgs"></div>
-      <div class="sugs" id="sugs"></div>
-      <form class="mform" id="mForm"><input id="mIn" placeholder="Escríbele a mise… (ej. ¿qué pido hoy?)" autocomplete="off"><button type="submit">↑</button></form>
-    </div>
-  </div>
 
 </div></div>
 
@@ -1048,13 +1060,14 @@ function ask(q){ if(!q.trim()) return; bubble(q,'u'); say(answer(q)); document.g
 function renderSugs(){ document.getElementById('sugs').innerHTML=SUGS[curView()].map(q=>`<span class="sug">${q}</span>`).join(''); document.querySelectorAll('.sug').forEach(s=>s.onclick=()=>ask(s.textContent)); }
 function openMise(){ const v=curView(); document.getElementById('mCtx').textContent=VNAME[v]; renderSugs();
   const box=document.getElementById('msgs'); if(!box.children.length) say(`¡Hola, Nico! Soy <b>mise</b>. Conozco tus ventas, tu despensa y tus pedidos. Pregúntame lo que quieras o toca una sugerencia 👇`);
-  document.getElementById('miseOv').classList.add('on'); setTimeout(()=>document.getElementById('mIn').focus(),350); }
-function closeMise(){ document.getElementById('miseOv').classList.remove('on'); }
-document.getElementById('askOpen').onclick=openMise;
+  document.getElementById('mise').classList.add('on');
+  document.getElementById('askOpen').classList.add('open');
+  setTimeout(()=>document.getElementById('mIn').focus(),380); }
+function closeMise(){ document.getElementById('mise').classList.remove('on'); document.getElementById('askOpen').classList.remove('open'); }
+document.getElementById('askOpen').onclick=()=>{ document.getElementById('mise').classList.contains('on')?closeMise():openMise(); };
 document.getElementById('mClose').onclick=closeMise;
-document.getElementById('miseOv').onclick=e=>{ if(e.target.id==='miseOv') closeMise(); };
 document.getElementById('mForm').onsubmit=e=>{ e.preventDefault(); ask(document.getElementById('mIn').value); };
-addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('miseOv').classList.contains('on')?closeMise():openMise(); } if(e.key==='Escape') closeMise(); });
+addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('mise').classList.contains('on')?closeMise():openMise(); } if(e.key==='Escape') closeMise(); });
 function renderAll(){ renderSide(); renderDespensa(); renderPlanes(); renderPronostico(); renderProveedores(); renderRecetas(); renderPanorama(); }
 renderAll(); pzPlay();
 </script>
