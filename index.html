@@ -389,6 +389,18 @@
   .mform button:hover { transform:rotate(-15deg) scale(1.08); }
   .askbtn { cursor:pointer; transition:.2s; } .askbtn:hover { transform:translateY(-2px); box-shadow:0 .25vw 0 var(--pk); }
   .askbtn kbd { margin-left:auto; font-family:'DM Mono'; font-size:.55vw; opacity:.55; }
+
+  /* ---- ajustar stock inline ---- */
+  .kpis-edit { background:var(--paper); border-radius:.8vw; padding:.7vw .8vw; display:flex; flex-direction:column; gap:.5vw; }
+  .kpi-edit-label { display:flex; align-items:center; justify-content:space-between; }
+  .kpi-edit-label small { font-family:'DM Mono'; font-size:.58vw; opacity:.65; }
+  .kpi-edit-unit { font-family:'DM Mono'; font-size:.6vw; background:var(--ink); color:var(--paper); padding:.05vw .4vw; border-radius:99px; }
+  .kpi-edit-row { display:flex; align-items:center; gap:.9vw; }
+  .kpi-edit-row .step input { width:3.8vw; font-size:.82vw; font-weight:600; }
+  .kpi-edit-preview { display:flex; flex-direction:column; align-items:flex-start; }
+  .kpi-edit-preview span { font-family:'Bricolage Grotesque'; font-size:1.5vw; letter-spacing:-.03em; line-height:1; transition:color .3s; }
+  .kpi-edit-preview small { font-family:'DM Mono'; font-size:.56vw; opacity:.6; margin-top:.15vw; }
+  .kpi-edit-hint { font-family:'DM Mono'; font-size:.58vw; opacity:.6; }
 </style>
 </head>
 <body>
@@ -646,7 +658,7 @@ function renderDespensa(){
   document.getElementById('sVal').textContent=money(I.reduce((s,x)=>s+x.stock*x.precio,0));
   renderDetail();
 }
-function renderDetail(){
+function renderDetail(editMode){
   const x=byId[selI], p=planDe(x.id), c=CATS[x.cat].c;
   const mx=Math.max(...x.hist)*1.15, pts=x.hist.map((v,k)=>`${k/13*100},${40-v/mx*38}`).join(' ');
   const q=p?p.items.find(it=>it.id===x.id).q:0;
@@ -654,15 +666,116 @@ function renderDetail(){
   if(!p) nextH=`<div class="next none">No hay pedido planeado. ${seAcaba(x)>6?'Alcanza más allá de esta semana.':'Se acaba el <b>'+DIAS[Math.floor(seAcaba(x))]+'</b>.'}</div>`;
   else { const late=llega(p)>seAcaba(x);
     nextH=`<div class="next ${late?'late':''}"><b>${PROV[p.prov].n}</b> · pedir el <b>${DIAS[p.dia]}</b>, llega el <b>${DIAS[Math.min(6,llega(p))]}</b><br>+${q} ${x.u} → alcanza hasta ${r1(cov(x)+q/x.cons)} días ${late?'<br><b style="color:var(--pk)">⚠ Llega tarde: se acaba el '+DIAS[Math.floor(seAcaba(x))]+'</b>':''}</div>`; }
+
+  const kpisH = editMode
+    ? `<div class="kpis-edit">
+        <div class="kpi-edit-label"><small>Nuevo stock en bodega</small><span class="kpi-edit-unit">${x.u}</span></div>
+        <div class="kpi-edit-row">
+          <div class="step">
+            <button id="adjM">−</button>
+            <input id="adjVal" type="number" value="${r1(x.stock)}" min="0" step="${x.u==='und'?1:0.1}">
+            <button id="adjP">+</button>
+          </div>
+          <div class="kpi-edit-preview">
+            <span id="adjDays" style="color:${cov(x)<2.5?'var(--pk)':'var(--gr)'}; font-weight:800">${r1(cov(x))} d</span>
+            <small>de cobertura</small>
+          </div>
+        </div>
+        <div class="kpi-edit-hint">Stock actual: <b>${r1(x.stock)} ${x.u}</b> · consumo: ${r1(x.cons)} ${x.u}/día</div>
+      </div>`
+    : `<div class="kpis"><div class="kpi"><small>en bodega</small><b>${r1(x.stock)} ${x.u}</b></div><div class="kpi"><small>consumo/día</small><b>${r1(x.cons)} ${x.u}</b></div><div class="kpi"><small>alcanza</small><b style="color:${cov(x)<2.5?'var(--pk)':'inherit'}">${r1(cov(x))} d</b></div></div>`;
+
+  const btnsH = editMode
+    ? `<div class="btns"><button class="btn" id="adjCancel">Cancelar</button><button class="btn pk" id="adjSave">Guardar cambio</button></div>`
+    : `<div class="btns"><button class="btn" id="adjOpen">Ajustar stock</button><button class="btn" id="mermaOpen">Registrar merma</button>${p?`<button class="btn pri" id="goPlan">Ver pedido →</button>`:`<button class="btn pk">+ Crear pedido</button>`}</div>`;
+
   document.getElementById('detail').innerHTML=`
     <div><div class="kick" style="color:${c}">● ${CATS[x.cat].n}</div><h3>${x.n}</h3><div class="sub">${PROV[x.prov].n} · entrega en ${PROV[x.prov].lead} día${PROV[x.prov].lead>1?'s':''}</div></div>
-    <div class="kpis"><div class="kpi"><small>en bodega</small><b>${r1(x.stock)} ${x.u}</b></div><div class="kpi"><small>consumo/día</small><b>${r1(x.cons)} ${x.u}</b></div><div class="kpi"><small>alcanza</small><b style="color:${cov(x)<2.5?'var(--pk)':'inherit'}">${r1(cov(x))} d</b></div></div>
+    ${kpisH}
     <div><div class="sect" style="opacity:.6">Consumo últimos 14 días</div>
     <svg class="spark" viewBox="0 0 100 42" preserveAspectRatio="none"><polyline points="0,42 ${pts} 100,42" fill="${c}" fill-opacity=".25" stroke="none"/><polyline points="${pts}" fill="none" stroke="var(--ink)" stroke-width="1.2" vector-effect="non-scaling-stroke"/><line x1="0" x2="100" y1="${40-x.cons/mx*38}" y2="${40-x.cons/mx*38}" stroke="var(--pk)" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/></svg></div>
     ${nextH}
     <div><div class="sect" style="opacity:.6">Se usa en</div><div class="uses">${(usos(x.id).length?usos(x.id):['Sin receta asociada']).map((u,k)=>`<span class="use">${u}</span>`).join('')}</div></div>
-    <div class="btns"><button class="btn">Ajustar stock</button><button class="btn">Registrar merma</button>${p?`<button class="btn pri" id="goPlan">Ver pedido →</button>`:`<button class="btn pk">+ Crear pedido</button>`}</div>`;
+    ${btnsH}`;
+
   const g=document.getElementById('goPlan'); if(g) g.onclick=()=>{ selP=planes.indexOf(p); document.querySelector('.nav li[data-v="planes"]').click(); };
+
+  if(!editMode){
+    document.getElementById('adjOpen').onclick=()=>renderDetail(true);
+    const mermaBtn=document.getElementById('mermaOpen');
+    if(mermaBtn) mermaBtn.onclick=()=>openMerma();
+    return;
+  }
+
+  // — lógica del editor de stock —
+  const inp=document.getElementById('adjVal');
+  const daysEl=document.getElementById('adjDays');
+  const step=x.u==='und'?1:0.1;
+
+  const preview=val=>{
+    const v=Math.max(0,val);
+    const d=r1(v/x.cons);
+    daysEl.textContent=d+' d';
+    daysEl.style.color=d<2.5?'var(--pk)':'var(--gr)';
+  };
+
+  document.getElementById('adjM').onclick=()=>{ inp.value=r1(Math.max(0,parseFloat(inp.value||0)-step)); preview(parseFloat(inp.value)); };
+  document.getElementById('adjP').onclick=()=>{ inp.value=r1(parseFloat(inp.value||0)+step); preview(parseFloat(inp.value)); };
+  inp.oninput=()=>preview(parseFloat(inp.value)||0);
+
+  document.getElementById('adjCancel').onclick=()=>renderDetail(false);
+
+  document.getElementById('adjSave').onclick=()=>{
+    const nuevo=Math.max(0,parseFloat(inp.value)||0);
+    const anterior=r1(x.stock);
+    x.stock=nuevo;
+    renderAll();
+    const diff=r1(nuevo-anterior);
+    const signo=diff>=0?'+':'';
+    toast(`${x.n} actualizado: ${anterior} → <b>${r1(nuevo)} ${x.u}</b> (${signo}${diff}) · ahora alcanza ${r1(cov(x))} días`);
+  };
+}
+
+/* Modal de merma rápida (sin abrir un modal completo, inline sobre el mismo panel) */
+function openMerma(){
+  const x=byId[selI], c=CATS[x.cat].c;
+  const det=document.getElementById('detail');
+  // reutilizamos el mismo panel pero sólo sobreescribimos la zona de botones
+  const btnsEl=det.querySelector('.btns');
+  if(!btnsEl) return;
+  btnsEl.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:.5vw;width:100%">
+      <div class="kpi-edit-label"><small>¿Cuánto se perdió? (${x.u})</small></div>
+      <div class="kpi-edit-row">
+        <div class="step">
+          <button id="mermaM">−</button>
+          <input id="mermaVal" type="number" value="0" min="0" step="${x.u==='und'?1:0.1}" style="width:3.5vw">
+          <button id="mermaP">+</button>
+        </div>
+        <div class="kpi-edit-preview">
+          <span id="mermaDays" style="color:var(--gr);font-weight:800">${r1(cov(x))} d</span>
+          <small>quedarían</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5vw;margin-top:.2vw">
+        <button class="btn" id="mermaCancel">Cancelar</button>
+        <button class="btn pk" id="mermaGuardar">Registrar</button>
+      </div>
+    </div>`;
+  const step=x.u==='und'?1:0.1;
+  const inp=document.getElementById('mermaVal');
+  const dEl=document.getElementById('mermaDays');
+  const preview=val=>{ const d=r1(Math.max(0,x.stock-val)/x.cons); dEl.textContent=d+' d'; dEl.style.color=d<2.5?'var(--pk)':'var(--gr)'; };
+  document.getElementById('mermaM').onclick=()=>{ inp.value=r1(Math.max(0,parseFloat(inp.value||0)-step)); preview(parseFloat(inp.value)); };
+  document.getElementById('mermaP').onclick=()=>{ inp.value=r1(Math.max(0,parseFloat(inp.value||0)+step)); preview(parseFloat(inp.value)); };
+  inp.oninput=()=>preview(parseFloat(inp.value)||0);
+  document.getElementById('mermaCancel').onclick=()=>renderDetail(false);
+  document.getElementById('mermaGuardar').onclick=()=>{
+    const perdido=Math.min(x.stock,Math.max(0,parseFloat(inp.value)||0));
+    x.stock=r1(x.stock-perdido);
+    renderAll();
+    toast(`Merma registrada: −${r1(perdido)} ${x.u} de ${x.n} · quedan ${r1(x.stock)} ${x.u} (${r1(cov(x))} días)`);
+  };
 }
 
 /* ================== PLANES ================== */
