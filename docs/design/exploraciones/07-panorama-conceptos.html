@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Panorama: conceptos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1b1a17; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; }
+  header.q { padding:22px 40px 14px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:28px; } header.q h1 em { color:#ff48b0; }
+  header.q p { color:#a39d90; font-size:14px; max-width:600px; margin-top:6px; line-height:1.5; }
+  .cards { display:flex; gap:8px; flex-wrap:wrap; }
+  .card { cursor:pointer; border:1px solid #3a372f; border-radius:999px; padding:9px 16px; font-size:14px; background:#23211d; transition:.25s; }
+  .card.active { background:#efe9dd; color:#16140f; }
+  .stagewrap { padding:0 40px 20px; }
+  .stage { position:relative; width:100%; aspect-ratio:16/9.4; border-radius:18px; overflow:hidden; display:flex;
+    --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#ff48b0; --yl:#ffe800; --bl:#0078bf; --or:#ff6c2f; --gr:#00a878;
+    background:var(--paper); color:var(--ink); }
+  .grain { position:absolute; inset:0; opacity:.28; mix-blend-mode:multiply; pointer-events:none; z-index:50;
+     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .notes { padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .note { font-size:13px; line-height:1.55; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; opacity:.45; transition:.3s; }
+  .note.on { opacity:1; } .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#ff48b0; font-style:normal; }
+  .mono { font-family:'DM Mono',monospace; } .disp { font-family:'Bricolage Grotesque'; font-weight:800; letter-spacing:-.04em; }
+
+  /* sidebar (estático) */
+  .side { position:relative; z-index:6; width:16.5%; padding:2vw 1.2vw 1.2vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; display:flex; flex-direction:column; flex:none; }
+  .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; }
+  .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.6vw; height:.6vw; border-radius:50%; background:var(--yl); }
+  .nav { list-style:none; display:flex; flex-direction:column; gap:.35vw; margin-top:auto; margin-bottom:auto; }
+  .nav li { display:flex; align-items:center; gap:.8vw; font-size:1.05vw; font-weight:500; padding:.65vw .8vw; border-radius:.7vw; opacity:.62; }
+  .nav li.cur { opacity:1; background:var(--pk); color:#fff; font-weight:700; box-shadow:.25vw .25vw 0 var(--yl); }
+  .nav li.cur .ic { background:#fff !important; }
+  .ic { width:1.1vw; height:1.1vw; flex:none; } .ic.c{border-radius:50%} .ic.s{border-radius:.2vw} .ic.t{clip-path:polygon(50% 0,100% 100%,0 100%)} .ic.h{border-radius:50% 50% 0 0} .ic.d{transform:rotate(45deg) scale(.8);border-radius:.15vw} .ic.p{border-radius:50% 50% 50% 0}
+  .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.82vw; font-weight:600; padding:.7vw .9vw; border-radius:99px; background:var(--yl); color:var(--ink); margin-bottom:.8vw; }
+  .orb { width:1.05vw; height:1.05vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 4s linear infinite; flex:none; }
+  @keyframes spin { to { transform:rotate(360deg);} }
+  .who { font-size:.7vw; opacity:.8; } .who b { display:block; font-size:.8vw; }
+  .main { flex:1; position:relative; overflow:hidden; }
+  .scene { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .5s; }
+  .scene.on { opacity:1; pointer-events:auto; }
+
+  /* ====== 1 · EL DIARIO ====== */
+  #S1 { padding:1.6vw 2.4vw 0; display:flex; flex-direction:column; }
+  .mast { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:4px double var(--ink); padding-bottom:.5vw; }
+  .mast .nm { font-family:'Fraunces',serif; font-weight:900; font-size:3.6vw; letter-spacing:-.03em; line-height:.9; }
+  .mast .nm i { color:var(--pk); font-weight:500; }
+  .mast .meta { font-family:'DM Mono'; font-size:.62vw; text-align:right; line-height:1.6; opacity:.75; }
+  .wx { display:inline-flex; align-items:center; gap:.5vw; border:1.5px solid var(--ink); padding:.3vw .6vw; border-radius:99px; margin-bottom:.4vw; font-size:.66vw; opacity:1; }
+  .paper { flex:1; display:grid; grid-template-columns:1.55fr 1fr 1fr; gap:1.6vw; padding-top:1.2vw; min-height:0; }
+  .paper > div { min-width:0; }
+  .lead h2 { font-family:'Fraunces',serif; font-weight:800; font-size:2.9vw; line-height:.98; letter-spacing:-.025em; }
+  .lead h2 em { font-style:italic; color:var(--pk); font-weight:600; }
+  .lead .dek { font-size:.95vw; line-height:1.5; margin-top:.8vw; opacity:.85; }
+  .lead .art { position:relative; height:11vw; margin-top:1vw; }
+  .lead .art .tomato { position:absolute; left:1vw; top:.5vw; width:10vw; height:10vw; border-radius:50%; background:radial-gradient(circle at 35% 35%, #ff8fcf 0 18%, transparent 19%), radial-gradient(#ff48b0 1.1px, transparent 1.4px) 0 0/6px 6px, var(--pk); mix-blend-mode:multiply; }
+  .lead .art .tomato::before { content:''; position:absolute; left:3.6vw; top:-.9vw; width:2.8vw; height:2.2vw; background:var(--gr); clip-path:polygon(50% 0,62% 38%,100% 30%,70% 60%,85% 100%,50% 75%,15% 100%,30% 60%,0 30%,38% 38%); mix-blend-mode:multiply; }
+  .lead .art .tomato2 { position:absolute; left:1.4vw; top:.9vw; width:10vw; height:10vw; border-radius:50%; border:2px solid var(--ink); }
+  .lead .art .cap { position:absolute; left:12.5vw; top:1vw; right:0; font-family:'DM Mono'; font-size:.64vw; line-height:1.6; }
+  .lead .art .cap b { font-family:'Bricolage Grotesque'; font-size:2.4vw; display:block; letter-spacing:-.04em; line-height:1; color:var(--pk); }
+  .lead .btnrow { display:flex; gap:.6vw; margin-top:.4vw; }
+  .btn { font-family:'Instrument Sans'; font-weight:700; font-size:.74vw; padding:.6vw .95vw; border-radius:99px; border:2px solid var(--ink); background:var(--card); cursor:pointer; }
+  .btn.pk { background:var(--pk); border-color:var(--pk); color:#fff; } .btn.ink { background:var(--ink); color:var(--paper); }
+  .col { border-left:1px solid #1d1a2b44; padding-left:1.6vw; display:flex; flex-direction:column; gap:1vw; }
+  .story .kk { font-family:'DM Mono'; font-size:.6vw; letter-spacing:.14em; text-transform:uppercase; color:var(--pk); }
+  .story h3 { font-family:'Fraunces',serif; font-weight:800; font-size:1.45vw; line-height:1.05; letter-spacing:-.02em; margin-top:.3vw; }
+  .story p { font-size:.78vw; line-height:1.55; margin-top:.4vw; opacity:.85; }
+  .story + .story { border-top:1px solid #1d1a2b33; padding-top:1vw; }
+  .spark { display:flex; gap:.25vw; align-items:flex-end; height:3vw; margin-top:.5vw; }
+  .spark i { flex:1; background:var(--bl); border-radius:.2vw .2vw 0 0; } .spark i.e { background:var(--pk); }
+  .spark + .sd { display:flex; justify-content:space-between; font-family:'DM Mono'; font-size:.5vw; opacity:.6; margin-top:.2vw; }
+  .dl { font-size:.76vw; line-height:1.9; margin-top:.4vw; }
+  .dl span { display:flex; justify-content:space-between; border-bottom:1px dotted #1d1a2b55; }
+  .dl b { font-family:'DM Mono'; font-weight:500; font-size:.66vw; }
+  .ticker { margin:1vw -2.4vw 0; background:var(--ink); color:var(--paper); padding:.7vw 0; overflow:hidden; white-space:nowrap; font-family:'DM Mono'; font-size:.78vw; }
+  .ticker .tr { display:inline-block; animation:tick 28s linear infinite; }
+  .ticker .tr span { margin:0 1.4vw; } .ticker .tr b { color:var(--yl); font-weight:500; } .ticker .tr em { color:var(--pk); font-style:normal; }
+  @keyframes tick { to { transform:translateX(-50%); } }
+
+  /* ====== 2 · RELOJ DE LA SEMANA ====== */
+  #S2 { display:flex; align-items:center; padding:0 2.4vw 0 3vw; gap:2vw; }
+  .s2l { width:32%; }
+  .s2l .kick { font-family:'DM Mono'; font-size:.66vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+  .s2l h2 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.3vw; letter-spacing:-.05em; line-height:.95; margin-top:.5vw; }
+  .s2l h2 .hl { background:var(--yl); padding:0 .3vw; } .s2l h2 .pk { color:var(--pk); }
+  .s2l .leg { margin-top:1.8vw; display:flex; flex-direction:column; gap:.7vw; font-size:.8vw; }
+  .s2l .leg span { display:flex; align-items:center; gap:.7vw; }
+  .s2l .leg i { width:1.3vw; height:1.3vw; border-radius:.3vw; flex:none; display:flex; align-items:center; justify-content:center; font-style:normal; font-size:.7vw; }
+  .s2l .detail { margin-top:1.8vw; border:2px solid var(--ink); border-radius:1.1vw; padding:1vw 1.1vw; background:var(--card); box-shadow:.35vw .4vw 0 var(--ink); min-height:8vw; }
+  .s2l .detail .dd { font-family:'DM Mono'; font-size:.62vw; opacity:.6; text-transform:uppercase; }
+  .s2l .detail .dn { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.04em; margin-top:.2vw; }
+  .s2l .detail .dx { font-size:.78vw; line-height:1.5; margin-top:.3vw; }
+  .clock { flex:1; height:100%; position:relative; }
+  .clock svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .clock .petal { cursor:pointer; transition:transform .3s; transform-origin:center; transform-box:view-box; }
+  .clock .petal:hover { filter:brightness(1.08); }
+  .hand { transform-origin:50% 50%; transform-box:view-box; animation:hand 18s ease-in-out infinite alternate; }
+  @keyframes hand { from { transform:rotate(-6deg);} to { transform:rotate(6deg);} }
+
+  /* ====== 3 · LA DESPENSA RESPIRA ====== */
+  #S3 canvas { position:absolute; inset:0; width:100%; height:100%; }
+  #S3 .ov { position:absolute; left:2.6vw; top:2vw; z-index:3; max-width:34vw; pointer-events:none; }
+  #S3 .ov .kick { font-family:'DM Mono'; font-size:.66vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+  #S3 .ov h2 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.3vw; letter-spacing:-.05em; line-height:.95; margin-top:.4vw; }
+  #S3 .ov h2 .pk { color:var(--pk); }
+  #S3 .ov p { font-size:.85vw; line-height:1.5; margin-top:.8vw; opacity:.8; }
+  #S3 .zone { position:absolute; right:0; top:0; bottom:0; width:27%; background:repeating-linear-gradient(-45deg,#ff48b010 0 .8vw,transparent .8vw 1.6vw); border-left:2.5px dashed var(--pk); z-index:1; }
+  #S3 .zone .zl { position:absolute; top:2vw; left:1.2vw; right:1.2vw; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.3vw; color:var(--pk); letter-spacing:-.03em; line-height:1.05; }
+  #S3 .zone .zl small { display:block; font-family:'DM Mono'; font-weight:400; font-size:.6vw; color:var(--ink); opacity:.65; letter-spacing:0; margin-top:.3vw; }
+  #S3 .zone .btn { position:absolute; left:1.2vw; right:1.2vw; bottom:2vw; text-align:center; z-index:4; }
+  #S3 .leg3 { position:absolute; left:2.6vw; bottom:1.6vw; z-index:3; display:flex; gap:1.2vw; font-family:'DM Mono'; font-size:.6vw; opacity:.75; }
+  #S3 .leg3 i { display:inline-block; width:.7vw; height:.7vw; border-radius:50%; margin-right:.3vw; vertical-align:middle; }
+  #S3 .tip { position:absolute; z-index:6; pointer-events:none; background:var(--ink); color:var(--paper); font-size:.72vw; padding:.45vw .7vw; border-radius:.5vw; opacity:0; transition:opacity .15s; white-space:nowrap; }
+
+  /* ====== 4 · MISE PRIMERO ====== */
+  #S4 { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 6vw; }
+  #S4 .big-orb { width:7vw; height:7vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--gr),var(--pk)); animation:spin 9s linear infinite; box-shadow:0 0 0 .6vw var(--paper), 0 0 0 .8vw var(--ink); position:relative; }
+  #S4 .big-orb::after { content:''; position:absolute; inset:-2vw; border-radius:50%; background:radial-gradient(#ff48b033,transparent 70%); animation:breath 3s ease-in-out infinite; z-index:-1; }
+  @keyframes breath { 50% { transform:scale(1.25); opacity:.4; } }
+  #S4 .hi { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.6vw; letter-spacing:-.05em; margin-top:1.6vw; line-height:1; }
+  #S4 .hi .pk { color:var(--pk); }
+  #S4 .brief { font-size:1.45vw; line-height:1.75; max-width:52vw; margin-top:1.4vw; font-weight:500; }
+  #S4 .ch { display:inline-flex; align-items:center; gap:.35vw; padding:0 .6vw; border-radius:99px; border:2px solid var(--ink); font-weight:700; cursor:pointer; line-height:1.5; box-shadow:.15vw .15vw 0 var(--ink); transition:.15s; white-space:nowrap; }
+  #S4 .ch:hover { transform:translateY(-2px); box-shadow:.15vw .3vw 0 var(--ink); }
+  #S4 .ch i { width:.7vw; height:.7vw; border-radius:50%; display:inline-block; }
+  #S4 .ask { margin-top:2.2vw; width:44vw; display:flex; align-items:center; gap:.8vw; padding:.5vw .5vw .5vw 1.4vw; border:2px solid var(--ink); border-radius:99px; background:var(--card); box-shadow:.35vw .35vw 0 var(--pk); }
+  #S4 .ask span { flex:1; text-align:left; font-size:1vw; opacity:.5; }
+  #S4 .ask button { width:2.6vw; height:2.6vw; border-radius:50%; border:0; background:var(--pk); color:#fff; font-size:1.1vw; }
+  #S4 .sugs { display:flex; gap:.5vw; margin-top:1vw; flex-wrap:wrap; justify-content:center; }
+  #S4 .sugs span { font-size:.74vw; padding:.35vw .8vw; border-radius:99px; border:1.5px solid #1d1a2b55; background:var(--card); }
+  #S4 .blob { position:absolute; border-radius:50%; mix-blend-mode:multiply; animation:float 11s ease-in-out infinite alternate; }
+  @keyframes float { to { transform:translate(2vw,-1.5vw) scale(1.08);} }
+</style>
+</head>
+<body>
+<header class="q">
+  <div><h1>Panorama: <em>una idea propia</em></h1>
+  <p>Son cuatro conceptos en los que el Panorama no es un resumen de las otras pestañas, sino una forma distinta de ver tu cocina. Todos usan los mismos datos. Pasa el mouse por el reloj y por la despensa.</p></div>
+  <div class="cards">
+    <div class="card active" onclick="pick(this,1)" data-choice="1-diario">1 · El diario</div>
+    <div class="card" onclick="pick(this,2)" data-choice="2-reloj">2 · Reloj de la semana</div>
+    <div class="card" onclick="pick(this,3)" data-choice="3-despensa-respira">3 · La despensa respira</div>
+    <div class="card" onclick="pick(this,4)" data-choice="4-mise-primero">4 · mise primero</div>
+  </div>
+</header>
+<div class="stagewrap"><div class="stage">
+  <div class="grain"></div>
+  <aside class="side">
+    <div class="brand">mise</div>
+    <ul class="nav"><li class="cur"><span class="ic c" style="background:var(--pk)"></span>Panorama</li><li><span class="ic s" style="background:var(--or)"></span>Despensa</li><li><span class="ic t" style="background:var(--yl)"></span>Planes de compra</li><li><span class="ic h" style="background:var(--bl)"></span>Pronóstico</li><li><span class="ic d" style="background:var(--pk)"></span>Proveedores</li><li><span class="ic p" style="background:var(--bl)"></span>Recetas</li></ul>
+    <div class="askbtn"><span class="orb"></span>Pregúntale a mise</div>
+    <div class="who"><b>La Olla de Nico</b>Chapinero · 64 platos/día</div>
+  </aside>
+  <main class="main">
+
+  <!-- 1 · DIARIO -->
+  <section class="scene on" id="S1">
+    <div class="mast">
+      <div><div class="wx mono">☀︎ 494 platos esta semana · pico el sábado</div><div class="nm">La Olla <i>Diaria</i></div></div>
+      <div class="meta">Jueves 24 de septiembre de 2026<br>Edición de la mañana · Chapinero<br>Hecho por mise con tus ventas</div>
+    </div>
+    <div class="paper">
+      <div class="lead">
+        <div class="story"><div class="kk">Lo más urgente</div></div>
+        <h2>El cilantro no llega al viernes: <em>hay que pedirlo hoy</em></h2>
+        <p class="dek">Con 0,3 kg en bodega y un consumo de 0,25 kg al día, alcanza 1,2 días. Fruver El Paisa entrega en 24 horas: si el pedido sale antes de las 4 p. m., llega mañana a primera hora.</p>
+        <div class="art"><div class="tomato"></div><div class="tomato2"></div><div class="cap"><b>3 insumos</b>van en la misma comanda de Fruver: cilantro (1,2 días), tomate (2,1 días) y cebolla. Total: $95k.</div></div>
+        <div class="btnrow"><button class="btn pk">Pedir a Fruver ahora</button><button class="btn">Ver la comanda</button></div>
+      </div>
+      <div class="col">
+        <div class="story"><div class="kk">Deportes y demanda</div><h3>Sábado de partido: se esperan 104 platos</h3><p>Colombia–Brasil suma unos 21 platos a un sábado que ya es el día fuerte. La bandeja paisa se lleva la mitad.</p>
+          <div class="spark" id="spk"></div><div class="sd"><span>jue</span><span>vie</span><span>sáb</span><span>dom</span><span>lun</span><span>mar</span><span>mié</span></div></div>
+        <div class="story"><div class="kk">Bolsillo</div><h3>Compras 11% más baratas que la semana pasada</h3><p>Pedir a tiempo evita las compras de urgencia en la tienda de la esquina, que salen hasta un 30% más caras.</p></div>
+      </div>
+      <div class="col">
+        <div class="story"><div class="kk">Llegadas</div><h3>Lo que entra a bodega</h3>
+          <div class="dl"><span>Fruver El Paisa <b>vie</b></span><span>Plaza 7 de agosto <b>vie</b></span><span>Carnes JR <b>dom</b></span><span>Lácteos Sol <b>dom</b></span><span>Distribuidora La 14 <b>mié</b></span></div></div>
+        <div class="story"><div class="kk">En la cocina</div><h3>La bandeja paisa sigue siendo la estrella</h3><p>18 al día y 76% de margen. El que menos deja es el ajiaco con pollo extra: revisa su gramaje.</p></div>
+      </div>
+    </div>
+    <div class="ticker"><div class="tr" id="tk"></div></div>
+  </section>
+
+  <!-- 2 · RELOJ -->
+  <section class="scene" id="S2">
+    <div class="s2l">
+      <div class="kick">Panorama · tu semana en un reloj</div>
+      <h2>Tu semana tiene <span class="hl">un pico</span>: el <span class="pk">sábado.</span></h2>
+      <div class="leg">
+        <span><i style="background:var(--bl)"></i>Cada pétalo es un día; su largo, los platos que vas a vender</span>
+        <span><i style="background:repeating-linear-gradient(-45deg,#ff48b0 0 3px,#ff48b099 3px 6px)"></i>Platos extra por un evento</span>
+        <span><i style="background:var(--pk);color:#fff">!</i>Día para pedir</span>
+        <span><i style="background:var(--yl)">🚚</i>Día en que llega un pedido</span>
+      </div>
+      <div class="detail" id="clkD"></div>
+    </div>
+    <div class="clock"><svg id="clk" viewBox="0 0 600 600"></svg></div>
+  </section>
+
+  <!-- 3 · RESPIRA -->
+  <section class="scene" id="S3">
+    <div class="zone"><div class="zl">Línea de pedido →<small>Lo que cruza esta línea se acaba antes de que llegue el próximo pedido si no lo pides hoy.</small></div><button class="btn pk">Armar pedido con estos 3</button></div>
+    <canvas id="cv3"></canvas><div class="tip" id="tip3"></div>
+    <div class="ov"><div class="kick">Panorama · tu despensa, viva</div><h2>Tres insumos <span class="pk">cruzaron la línea.</span></h2><p>Cada burbuja es un insumo: su tamaño es cuánto consumes y su posición, cuánto le queda. Entre más a la derecha, más urgente.</p></div>
+    <div class="leg3"><span><i style="background:var(--gr)"></i>verduras y frutas</span><span><i style="background:var(--pk)"></i>proteínas y lácteos</span><span><i style="background:var(--yl)"></i>granos y secos</span></div>
+  </section>
+
+  <!-- 4 · MISE PRIMERO -->
+  <section class="scene" id="S4">
+    <div class="blob" style="width:22vw;height:22vw;background:var(--yl);opacity:.35;left:-6vw;top:-6vw"></div>
+    <div class="blob" style="width:18vw;height:18vw;background:var(--pk);opacity:.16;right:-5vw;bottom:-5vw;animation-delay:-4s"></div>
+    <div class="blob" style="width:10vw;height:10vw;background:var(--bl);opacity:.14;right:12vw;top:4vw;animation-delay:-7s"></div>
+    <div class="big-orb"></div>
+    <div class="hi">Buenos días, <span class="pk">Nico</span>.</div>
+    <div class="brief">Hoy toca pedir a <span class="ch" style="background:#00a87826"><i style="background:var(--gr)"></i>Fruver El Paisa</span> y a <span class="ch" style="background:#ff6c2f22"><i style="background:var(--or)"></i>Plaza 7 de agosto</span>. El <span class="ch" style="background:#ff48b022"><i style="background:var(--pk)"></i>cilantro</span> se acaba mañana. El <span class="ch" style="background:#ffe80066">⚽ sábado</span> viene el partido: unos 21 platos más. Esta semana gastas <span class="ch" style="background:var(--card)">11% menos</span> en compras.</div>
+    <div class="ask"><span>Pregúntale lo que quieras a mise…</span><button>↑</button></div>
+    <div class="sugs"><span>¿Confirmo los pedidos de hoy?</span><span>¿Qué pasa si llueve el viernes?</span><span>¿Qué plato me deja menos?</span></div>
+  </section>
+
+  </main>
+</div></div>
+<div class="notes">
+  <div class="note on" id="n1"><b>1 · El diario</b>El Panorama es <i>la primera plana de un periódico</i> hecho con tus datos: nombre del diario, titular principal (lo más urgente, con una ilustración riso y botones), notas cortas en columnas y una cinta de noticias abajo. No hay cajas: se lee como una historia editorial.</div>
+  <div class="note" id="n2"><b>2 · Reloj de la semana</b>Una sola visualización grande: <i>la semana como una flor</i>. Cada pétalo es un día y su largo son los platos. Alrededor van las marcas de cuándo pedir y cuándo llega cada pedido. Al pasar el mouse por un pétalo, el panel explica ese día. Es la opción más “pieza de arte”.</div>
+  <div class="note" id="n3"><b>3 · La despensa respira</b>Vuelven las <i>células vivas</i> del concepto “Mercado vivo”: cada insumo es una burbuja que respira. Las urgentes se van hacia la derecha y cruzan la “línea de pedido”. Es el más impactante para proyectar en clase y se explica solo.</div>
+  <div class="note" id="n4"><b>4 · mise primero</b>El Panorama es <i>el asistente</i>: un saludo, un párrafo escrito como te lo diría un jefe de cocina, con fichas que puedes tocar (proveedores, insumos, días) y la barra para preguntarle. Es lo más limpio posible y deja claro que la plataforma usa IA.</div>
+</div>
+<script>
+function pick(el,n){ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active')); el.classList.add('active');
+  document.querySelectorAll('.scene').forEach(s=>s.classList.toggle('on',s.id==='S'+n)); document.querySelectorAll('.note').forEach(s=>s.classList.toggle('on',s.id==='n'+n));
+  if(window.brainstorm) window.brainstorm.choice(el.dataset.choice); if(n===3) setTimeout(init3,50); }
+const DIAS=['jue','vie','sáb','dom','lun','mar','mié'], DL=['Jueves 24','Viernes 25','Sábado 26','Domingo 27','Lunes 28','Martes 29','Miércoles 30'];
+const BASE=[64,74,83,70,54,58,61], EXTRA=[0,0,21,0,8,0,0], EVN=['','','⚽ Partido Colombia–Brasil','','🏖️ Lunes festivo','',''];
+const PED={0:['Fruver El Paisa','Plaza 7 de agosto'],1:['Carnes JR'],2:['Lácteos Sol'],3:['Distribuidora La 14']}, LLE={1:['Fruver','Plaza'],3:['Carnes','Lácteos'],6:['Distribuidora']};
+
+/* 1 */
+document.getElementById('spk').innerHTML=BASE.map((b,i)=>`<i class="${EXTRA[i]?'e':''}" style="height:${(b+EXTRA[i])/104*100}%"></i>`).join('');
+const tkTxt=`<span><em>● PEDIR HOY</em> Fruver El Paisa · Plaza 7 de agosto</span><span><b>LLEGA VIE</b> tomate, cebolla, cilantro, plátano</span><span><em>CILANTRO</em> 1,2 días</span><span><em>PLÁTANO</em> 1,2 días</span><span><b>SÁB</b> ⚽ +21 platos</span><span><b>LUN</b> 🏖️ festivo +8 platos</span><span>BODEGA $1,5M</span><span>PRONÓSTICO SEMANA PASADA: 91% DE ACIERTO</span>`;
+document.getElementById('tk').innerHTML=tkTxt+tkTxt;
+
+/* 2 · reloj */
+(()=>{ const svg=document.getElementById('clk'), C=300, R0=78, SC=1.95, mx=104;
+  const pol=(a,r)=>[C+r*Math.cos(a),C+r*Math.sin(a)];
+  let h=`<circle cx="${C}" cy="${C}" r="272" fill="none" stroke="#1d1a2b" stroke-width="1.5" stroke-dasharray="3 6" opacity=".35"/>`;
+  h+=`<defs><pattern id="hx" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#ff48b099"/><rect width="3.5" height="8" fill="#ff48b0"/></pattern></defs>`;
+  BASE.forEach((b,i)=>{ const a0=-Math.PI/2+(i-.42)/7*2*Math.PI, a1=-Math.PI/2+(i+.42)/7*2*Math.PI, am=(a0+a1)/2;
+    const r1=R0+b*SC, r2=r1+EXTRA[i]*SC;
+    const seg=(ra,rb,fill,st)=>{ const p1=pol(a0,ra),p2=pol(a0,rb),p3=pol(a1,rb),p4=pol(a1,ra); return `<path d="M${p1} L${p2} A${rb} ${rb} 0 0 1 ${p3} L${p4} A${ra} ${ra} 0 0 0 ${p1} Z" fill="${fill}" ${st||''}/>`; };
+    h+=`<g class="petal" data-i="${i}">${seg(R0,r1,i===0?'#1d1a2b':'#0078bf','stroke="#f6f1e7" stroke-width="3"')}${EXTRA[i]?seg(r1,r2,'url(#hx)','stroke="#ff48b0" stroke-width="2"'):''}`;
+    const [tx,ty]=pol(am,R0+ (b+EXTRA[i])*SC - 18); h+=`<text x="${tx}" y="${ty+5}" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="17" fill="#fff">${b+EXTRA[i]}</text>`;
+    const [lx,ly]=pol(am,292); h+=`<text x="${lx}" y="${ly+5}" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#1d1a2b">${i?DIAS[i]:'HOY'}</text></g>`;
+    if(PED[i]){ const [px,py]=pol(am-.3,292); h+=`<circle cx="${px}" cy="${py}" r="12" fill="#ff48b0"/><text x="${px}" y="${py+5}" text-anchor="middle" font-weight="800" font-size="14" fill="#fff" font-family="Bricolage Grotesque">!</text>`; }
+    if(LLE[i]){ const [px,py]=pol(am+.22,R0+ (b+EXTRA[i])*SC + 22); h+=`<circle cx="${px}" cy="${py}" r="14" fill="#ffe800" stroke="#1d1a2b" stroke-width="1.5"/><text x="${px}" y="${py+5}" text-anchor="middle" font-size="13">🚚</text>`; }
+  });
+  h+=`<circle cx="${C}" cy="${C}" r="${R0-6}" fill="#fffdf8" stroke="#1d1a2b" stroke-width="2.5"/>`;
+  h+=`<g class="hand"><line x1="${C}" y1="${C}" x2="${C}" y2="${C-R0+14}" stroke="#ff48b0" stroke-width="4" stroke-linecap="round"/></g>`;
+  h+=`<text x="${C}" y="${C-4}" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="30" fill="#1d1a2b">494</text><text x="${C}" y="${C+18}" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#1d1a2b">platos · 7 días</text>`;
+  svg.innerHTML=h;
+  const D=document.getElementById('clkD');
+  const show=i=>{ const t=BASE[i]+EXTRA[i]; D.innerHTML=`<div class="dd">${DL[i]}${i===0?' · hoy':''}</div><div class="dn">${t} platos</div><div class="dx">${EXTRA[i]?`<b>${EVN[i]}</b>: ${EXTRA[i]} platos más de lo normal.<br>`:''}${PED[i]?`<span style="color:var(--pk);font-weight:700">Pedir a ${PED[i].join(' y ')}.</span><br>`:''}${LLE[i]?`🚚 Llega ${LLE[i].join(' y ')}.`:''}${!EXTRA[i]&&!PED[i]&&!LLE[i]?'Un día tranquilo.':''}</div>`;
+    svg.querySelectorAll('.petal').forEach(p=>p.style.opacity=+p.dataset.i===i?1:.55); };
+  svg.querySelectorAll('.petal').forEach(p=>p.onmouseenter=()=>show(+p.dataset.i)); show(2);
+})();
+
+/* 3 · respira */
+const IT=[['Cilantro','v',.25,1.2],['Plátano','v',2.6,1.2],['Tomate','v',2,2.1],['Aguacate','v',9/4,2.4],['Cebolla','v',1.6,3.1],['Limón','v',1.8,3.3],['Yuca','v',1.5,5.3],['Papa','v',4.2,9],
+ ['Huevos','p',30/12,3],['Pechuga','p',2.7,4.1],['Queso','p',1.3,3.1],['Res molida','p',1.8,3.3],['Chicharrón','p',1.2,4.2],['Crema','p',.9,3.3],
+ ['Arroz','g',3.8,13.7],['Frijol','g',2.5,8],['Maíz','g',2.2,6.4],['Aceite','g',1.6,11.3],['Panela','g',.6,15]];
+const COL={v:'#00a878',p:'#ff48b0',g:'#ffe800'};
+let st3=null;
+function init3(){ const c=document.getElementById('cv3'), r=c.getBoundingClientRect(), d=devicePixelRatio||1; if(!r.width) return; c.width=r.width*d; c.height=r.height*d; const x=c.getContext('2d'); x.setTransform(d,0,0,d,0,0);
+  const W=r.width,H=r.height, line=W*.73;
+  const targetX=days=>days<2.3 ? line+W*.04+(2.3-days)/2.3*W*.12 : line-W*.05-Math.min(1,(days-2.3)/12.5)*(line-W*.12);
+  const B=IT.map((it,k)=>({n:it[0],c:COL[it[1]],R:Math.max(14,Math.sqrt(it[2])*W*.017),days:it[3],x:0,y:H*.35+Math.random()*H*.45,vx:0,vy:0,ph:Math.random()*6}));
+  B.forEach(b=>b.x=targetX(b.days)+(Math.random()-.5)*W*.05);
+  let mouse={x:-1,y:-1}; c.parentElement.onmousemove=e=>{ const rr=c.getBoundingClientRect(); mouse={x:e.clientX-rr.left,y:e.clientY-rr.top}; };
+  const tip=document.getElementById('tip3');
+  const blob=(cx,cy,R,t,ph)=>{ x.beginPath(); for(let k=0;k<=40;k++){const a=k/40*Math.PI*2, rr=R*(1+.06*Math.sin(a*3+t*1.3+ph)+.04*Math.sin(a*5-t*.9+ph)); const px=cx+Math.cos(a)*rr, py=cy+Math.sin(a)*rr; k?x.lineTo(px,py):x.moveTo(px,py);} x.closePath(); };
+  if(st3) cancelAnimationFrame(st3);
+  const fr=ts=>{ const t=ts/1000; x.clearRect(0,0,W,H); let hov=null;
+    B.forEach(a=>{ const tx=targetX(a.days), ty=H*.6; a.vx+=(tx-a.x)*.004; a.vy+=(ty-a.y)*.0008;
+      B.forEach(b=>{ if(a===b) return; const dx=a.x-b.x, dy=a.y-b.y, dd=Math.hypot(dx,dy)||1, m=a.R+b.R+6; if(dd<m){ const f=(m-dd)/dd*.05; a.vx+=dx*f; a.vy+=dy*f; } });
+      const dm=Math.hypot(a.x-mouse.x,a.y-mouse.y); if(dm<a.R) hov=a;
+      a.vx*=.88; a.vy*=.88; a.x+=a.vx; a.y+=a.vy; a.y=Math.max(a.R+H*.28,Math.min(H-a.R-H*.07,a.y)); });
+    B.forEach(a=>{ const urgent=a.x>line; const R=a.R*(1+.035*Math.sin(t*1.7+a.ph));
+      if(urgent){ const p=(t*.8+a.ph)%1; x.strokeStyle=`rgba(255,72,176,${.6*(1-p)})`; x.lineWidth=2; blob(a.x,a.y,R*(1+p*.6),t,a.ph); x.stroke(); }
+      x.globalAlpha=.9; x.fillStyle=a.c; blob(a.x,a.y,R*(hov===a?1.08:1),t,a.ph); x.fill(); x.globalAlpha=1;
+      x.strokeStyle='#1d1a2b'; x.lineWidth=urgent?2.5:1.2; blob(a.x,a.y,R*(hov===a?1.08:1),t,a.ph); x.stroke();
+      x.fillStyle='#1d1a2b'; x.textAlign='center'; x.font=`800 ${Math.max(10,R*.3)}px Bricolage Grotesque`; x.fillText(a.n,a.x,a.y+2);
+      x.font=`${Math.max(8,R*.22)}px DM Mono`; x.fillText(a.days+' d',a.x,a.y+R*.38); });
+    if(hov){ tip.style.opacity=1; tip.style.left=(hov.x+hov.R)+'px'; tip.style.top=(hov.y-hov.R)+'px'; tip.textContent=`${hov.n}: alcanza ${hov.days} días`; } else tip.style.opacity=0;
+    st3=requestAnimationFrame(fr); };
+  st3=requestAnimationFrame(fr); }
+</script>
+</body>
+</html>

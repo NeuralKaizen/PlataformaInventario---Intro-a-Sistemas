@@ -312,75 +312,34 @@
   .ings { overflow:auto; }
   .rnote { font-size:.64vw; line-height:1.45; opacity:.75; font-family:'DM Mono'; }
 
-  /* ======== PANORAMA ======== */
-  #v-panorama { padding-top:2vw; }
-  .phead { display:flex; justify-content:space-between; align-items:flex-start; position:relative; }
-  .phead h2 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.4vw; letter-spacing:-.05em; line-height:.92; margin-top:.5vw; max-width:40vw; }
-  .phead h2 .hl { background:var(--yl); padding:0 .3vw; } .phead h2 .pk { color:var(--pk); }
-  .psticker { width:7.4vw; height:7.4vw; border-radius:50%; background:var(--yl); display:flex; align-items:center; justify-content:center; text-align:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.85vw; line-height:1.05; transform:rotate(-10deg); box-shadow:.3vw .3vw 0 var(--pk); animation:wob 4.5s ease-in-out infinite; flex:none; margin-right:1vw; }
-  .psticker big { font-size:1.8vw; display:block; letter-spacing:-.04em; }
-  @keyframes wob { 50% { transform:rotate(-3deg) scale(1.05);} }
-  .bento { flex:1; display:grid; grid-template-columns:repeat(12,1fr); grid-template-rows:1fr 1fr; gap:1vw; margin-top:1.2vw; min-height:0; }
-  .tile { background:var(--card); border:2px solid var(--ink); border-radius:1.2vw; padding:1vw 1.1vw; box-shadow:.35vw .4vw 0 var(--ink); position:relative; overflow:hidden; cursor:pointer; transition:transform .2s, box-shadow .2s; display:flex; flex-direction:column; min-height:0; }
-  .tile:hover { transform:translate(-.15vw,-.15vw); box-shadow:.5vw .55vw 0 var(--ink); }
-  .tile .tt { display:flex; justify-content:space-between; align-items:baseline; }
-  .tile .tt b { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.05vw; letter-spacing:-.02em; }
-  .tile .tt span { font-family:'DM Mono'; font-size:.58vw; opacity:.55; }
-  .tile .go { position:absolute; right:.9vw; bottom:.7vw; font-family:'DM Mono'; font-size:.58vw; opacity:0; transition:.2s; }
-  .tile:hover .go { opacity:.7; }
-  .t-hoy { grid-column:span 5; background:var(--ink); color:var(--paper); box-shadow:.35vw .4vw 0 var(--pk); }
-  .t-hoy:hover { box-shadow:.5vw .55vw 0 var(--pk); }
-  .mini-tk { display:flex; gap:.7vw; margin-top:1vw; flex:1; align-items:flex-start; }
-  .mtk { flex:1; background:var(--card); color:var(--ink); padding:.7vw .6vw .8vw; font-family:'DM Mono'; font-size:.58vw; position:relative; transform:rotate(var(--r)); box-shadow:.25vw .3vw 0 var(--pk); }
-  .mtk::before { content:''; position:absolute; top:-.5vw; left:50%; width:1vw; height:.7vw; margin-left:-.5vw; background:var(--yl); border-radius:.15vw; }
-  .mtk h6 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.78vw; margin-bottom:.3vw; line-height:1; }
-  .mtk .li { display:flex; justify-content:space-between; border-bottom:1px dotted #1d1a2b44; padding:.1vw 0; }
-  .mtk.none { background:transparent; color:var(--paper); box-shadow:none; border:1.5px dashed #ffffff55; transform:none; display:flex; align-items:center; justify-content:center; font-size:.7vw; }
-  .mtk.none::before { display:none; }
-  .hoyfoot { display:flex; align-items:center; gap:.6vw; margin-top:.8vw; font-family:'DM Mono'; font-size:.6vw; }
-  .hoyfoot .nx { opacity:.7; flex:1; line-height:1.5; }
-  .hoyfoot .btn { font-size:.7vw; }
-  .mini-tk { flex:none !important; }
-  .t-hoy .mini-tk + .hoyfoot { margin-top:auto; }
-  .t-sem { grid-column:span 4; }
-  .mbars { flex:1; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:.4vw; align-items:end; margin-top:.6vw; border-bottom:2px solid var(--ink); }
-  .mbars .c { height:100%; display:flex; flex-direction:column; justify-content:flex-end; }
-  .mbars .n { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.66vw; text-align:center; margin-bottom:.15vw; }
-  .mbars .b { background:var(--bl); border-radius:.25vw .25vw .1vw .1vw; }
-  .mbars .x { background:repeating-linear-gradient(-45deg,var(--pk) 0 .2vw,#ff48b099 .2vw .4vw); border-radius:.25vw .25vw 0 0; }
-  .mbars .c.x2 .b { border-radius:0 0 .1vw .1vw; }
-  .mdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:.4vw; font-family:'DM Mono'; font-size:.52vw; text-align:center; margin-top:.25vw; opacity:.7; }
-  .t-salud { grid-column:span 3; align-items:center; text-align:center; }
-  .gauge { width:8.5vw; height:4.6vw; margin-top:.6vw; }
-  .gnum { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.04em; margin-top:-1.8vw; }
-  .gsub { font-size:.66vw; line-height:1.4; opacity:.75; margin-top:.3vw; }
-  .gmoney { margin-top:auto; font-family:'DM Mono'; font-size:.6vw; width:100%; display:flex; justify-content:space-between; border-top:1px dashed #1d1a2b33; padding-top:.5vw; }
-  .gmoney b { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.95vw; }
-  .t-jars { grid-column:span 4; }
-  .mjars { flex:1; display:flex; gap:1.1vw; align-items:center; justify-content:center; margin-top:.4vw; }
-  .mjar { width:4.2vw; display:flex; flex-direction:column; align-items:center; }
-  .mjar .lid { width:78%; height:.45vw; background:var(--ink); border-radius:.2vw .2vw 0 0; }
-  .mjar .bd { width:100%; height:6.2vw; border:2px solid var(--ink); border-radius:.4vw .4vw .8vw .8vw; position:relative; overflow:hidden; background:var(--paper); }
-  .mjar .bd i { position:absolute; left:0; right:0; bottom:0; }
-  .mjar .bd em { position:absolute; left:50%; transform:translateX(-50%); top:.3vw; background:var(--card); padding:0 .25vw; border-radius:.3vw; text-align:center; font-style:normal; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.72vw; z-index:2; }
-  .mjar small { font-size:.62vw; font-weight:600; margin-top:.3vw; white-space:nowrap; }
-  .mjar.low .bd { animation:alarm 1.6s infinite; }
-  .t-lleg { grid-column:span 3; }
-  .lleg { flex:1; display:flex; flex-direction:column; justify-content:space-evenly; margin-top:.3vw; }
-  .lleg .r { display:flex; align-items:center; gap:.6vw; font-size:.7vw; }
-  .lleg .r .dt { font-family:'DM Mono'; font-size:.58vw; width:2.6vw; text-align:center; padding:.1vw 0; border-radius:.3vw; background:var(--paper); }
-  .lleg .r .dt.t { background:var(--yl); }
-  .lleg .r .pin { width:1.2vw; height:1.2vw; border-radius:50%; border:1.5px solid var(--ink); flex:none; display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.55vw; }
-  .lleg .r b { font-weight:700; } .lleg .r .st { margin-left:auto; font-family:'DM Mono'; font-size:.55vw; }
-  .t-mise { grid-column:span 3; background:linear-gradient(135deg,#ffe80033,#ff48b022 60%,#0078bf22); }
-  .t-mise .orb { width:1.6vw; height:1.6vw; }
-  .t-mise p { font-size:.95vw; line-height:1.55; margin-top:.8vw; }
-  .t-mise p b { background:var(--yl); padding:0 .2vw; }
-  .t-mise .ask2 { margin-top:auto; font-family:'DM Mono'; font-size:.62vw; border:1.5px solid var(--ink); border-radius:99px; padding:.4vw .7vw; background:var(--card); }
-  .t-plato { grid-column:span 2; align-items:center; text-align:center; }
-  .t-plato svg { width:8vw; height:8vw; margin-top:1vw; }
-  .t-plato .pn { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.85vw; margin-top:.4vw; line-height:1.1; }
-  .t-plato .pm { font-family:'DM Mono'; font-size:.56vw; opacity:.7; margin-top:.2vw; }
+  /* ======== PANORAMA · conversación con mise ======== */
+  #v-panorama { padding:2.2vw 5vw 1.8vw; }
+  .pz-thread { flex:1; display:flex; flex-direction:column; gap:1.2vw; justify-content:center; min-height:0; }
+  .pz-row { display:flex; gap:1vw; align-items:flex-start; opacity:0; transform:translateY(1vw); transition:.55s cubic-bezier(.3,1.3,.5,1); }
+  .pz-row.in { opacity:1; transform:none; }
+  .pz-av { width:2.8vw; height:2.8vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 6s linear infinite; flex:none; box-shadow:0 0 0 .25vw var(--paper),0 0 0 .4vw var(--ink); }
+  .pz-kick { font-family:'DM Mono'; font-size:.66vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; margin-bottom:.3vw; }
+  .pz-hi { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3vw; letter-spacing:-.05em; line-height:1; }
+  .pz-hi .pk { color:var(--pk); }
+  .pz-say { font-size:1.4vw; line-height:1.6; font-weight:500; max-width:54vw; min-height:6.8vw; }
+  .pz-say b { font-weight:700; } .pz-say b.pk { color:var(--pk); } .pz-say b.hl { background:var(--yl); padding:0 .2vw; }
+  .pz-caret::after { content:'▍'; color:var(--pk); animation:blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .pz-acts { display:flex; gap:1.1vw; margin-left:3.8vw; }
+  .pz-act { width:16vw; background:var(--card); border:2px solid var(--ink); border-radius:1.1vw; padding:1vw 1.1vw; box-shadow:.3vw .35vw 0 var(--ink); display:flex; flex-direction:column; transition:transform .2s; }
+  .pz-act:hover { transform:translate(-.15vw,-.15vw); }
+  .pz-act .t { font-family:'DM Mono'; font-size:.58vw; opacity:.6; text-transform:uppercase; letter-spacing:.1em; }
+  .pz-act b { display:block; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.25vw; letter-spacing:-.03em; margin:.35vw 0 .8vw; line-height:1.1; }
+  .pz-act .btn { align-self:flex-start; margin-top:auto; }
+  .pz-act.ok { border-color:var(--gr); box-shadow:.3vw .35vw 0 var(--gr); }
+  .pz-act.hot { border-color:var(--pk); box-shadow:.3vw .35vw 0 var(--pk); }
+  .pz-foot { margin-top:1.4vw; display:flex; flex-direction:column; gap:.7vw; }
+  .pz-sugs { display:flex; gap:.5vw; flex-wrap:wrap; }
+  .pz-sugs span { font-size:.72vw; padding:.35vw .8vw; border-radius:99px; border:1.5px solid #1d1a2b55; background:var(--card); cursor:pointer; transition:.15s; }
+  .pz-sugs span:hover { background:var(--yl); transform:translateY(-1px); }
+  .pz-bar { display:flex; align-items:center; gap:.8vw; padding:.45vw .45vw .45vw 1.4vw; border:2px solid var(--ink); border-radius:99px; background:var(--card); box-shadow:.35vw .35vw 0 var(--pk); }
+  .pz-bar input { flex:1; border:0; outline:none; background:transparent; font-family:'Instrument Sans'; font-size:.95vw; }
+  .pz-bar button { width:2.5vw; height:2.5vw; border-radius:50%; border:0; background:var(--pk); color:#fff; font-size:1.05vw; cursor:pointer; }
 
   /* ======== MISE (asistente) ======== */
   .mise-ov { position:absolute; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .35s, backdrop-filter .35s; backdrop-filter:blur(0px); background:rgba(246,241,231,0); }
@@ -443,20 +402,17 @@
 
     <!-- PANORAMA -->
     <section class="view on" id="v-panorama">
-      <div class="phead">
-        <div><div class="kick">Panorama · jueves 24 de septiembre</div><h2 id="pH"></h2></div>
-        <div class="psticker" id="pSt"></div>
+      <div class="pz-thread">
+        <div class="pz-row"><span class="pz-av"></span><div><div class="pz-kick" id="pzDate">Panorama · jueves 24 de septiembre</div><div class="pz-hi">Buenos días, <span class="pk">Nico</span>.</div></div></div>
+        <div class="pz-row"><span class="pz-av" style="visibility:hidden"></span><div class="pz-say" id="pzSay"></div></div>
+        <div class="pz-row pz-acts" id="pzActs"></div>
       </div>
-      <div class="bento">
-        <div class="tile t-hoy" data-go="planes"><div class="tt"><b>Para pedir hoy</b><span id="hoyN"></span></div><div class="mini-tk" id="hoyTk"></div><div class="hoyfoot" id="hoyFoot"></div></div>
-        <div class="tile t-sem" data-go="pronostico"><div class="tt"><b>Tu semana en platos</b><span id="semN"></span></div><div class="mbars" id="mBars"></div><div class="mdays" id="mDays"></div><div class="go">ir a pronóstico →</div></div>
-        <div class="tile t-salud" data-go="despensa"><div class="tt" style="width:100%"><b>Salud de la despensa</b></div><svg class="gauge" viewBox="0 0 100 55" id="gauge"></svg><div class="gnum" id="gNum"></div><div class="gsub" id="gSub"></div><div class="gmoney" id="gMoney"></div></div>
-        <div class="tile t-jars" data-go="despensa"><div class="tt"><b>Se acaba pronto</b><span>días que alcanza</span></div><div class="mjars" id="mJars"></div><div class="go">ir a despensa →</div></div>
-        <div class="tile t-lleg" data-go="proveedores"><div class="tt"><b>Llegadas</b><span>próximos días</span></div><div class="lleg" id="lleg"></div><div class="go">ir a proveedores →</div></div>
-        <div class="tile t-mise" id="miseTile"><div class="tt"><b style="display:flex;align-items:center;gap:.5vw"><span class="orb"></span>mise dice</b></div><p id="miseSays"></p><div class="ask2">Pregúntale algo más →</div></div>
-        <div class="tile t-plato" data-go="recetas"><div class="tt" style="width:100%"><b>Plato estrella</b></div><div id="pStar"></div></div>
+      <div class="pz-foot">
+        <div class="pz-sugs" id="pzSugs"></div>
+        <form class="pz-bar" id="pzForm"><input id="pzIn" placeholder="Respóndele a mise…" autocomplete="off"><button type="submit">↑</button></form>
       </div>
     </section>
+
     <!-- DESPENSA -->
     <section class="view" id="v-despensa">
       <div class="vhead">
@@ -626,7 +582,7 @@ const money=v=>'$'+(v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e4?Math.round(v/1000)+'k':
 document.querySelectorAll('.nav li[data-v]').forEach(li=>li.onclick=()=>{
   document.querySelectorAll('.nav li').forEach(x=>x.classList.remove('cur')); li.classList.add('cur');
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+li.dataset.v));
-  renderAll();
+  renderAll(); if(li.dataset.v==='panorama'){ pzTyped=false; pzPlay(); }
 });
 let toastT; function toast(html){ const t=document.getElementById('toast'); t.innerHTML=html; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3200);
   const a=t.querySelector('a'); if(a) a.onclick=()=>document.querySelector('.nav li[data-v="'+a.dataset.go+'"]').click(); }
@@ -858,46 +814,53 @@ function renderRecetas(){
     toast(`${x.n}: el consumo ahora es ${r1(x.cons)} ${x.u}/día · alcanza ${before} → ${r1(cov(x))} días · <a data-go="despensa">ver despensa</a>`); });
 }
 
-/* ================== PANORAMA ================== */
+/* ================== PANORAMA · conversación ================== */
 const SEM_PASADA=1900000;
-function renderPanorama(){
-  const vis=planes.filter(p=>p.estado!=='descartado'), hoy=vis.filter(p=>p.dia===0);
-  const nIt=hoy.reduce((s,p)=>s+p.items.length,0), spend=vis.reduce((s,p)=>s+p.items.reduce((a,it)=>a+it.q*byId[it.id].precio,0),0);
-  const dPct=Math.round((spend/SEM_PASADA-1)*100);
-  document.getElementById('pH').innerHTML=nIt?`Hoy se piden <span class="hl">${nIt} cosas</span>, lo demás <span class="pk">aguanta.</span>`:`Hoy no hay que pedir <span class="pk">nada.</span>`;
-  document.getElementById('pSt').innerHTML=`<div><big>${dPct>0?'+':'−'}${Math.abs(dPct)}%</big>en compras vs semana pasada</div>`;
-  document.getElementById('hoyN').textContent=`${hoy.length} comanda${hoy.length!==1?'s':''} · ${money(hoy.reduce((s,p)=>s+p.items.reduce((a,it)=>a+it.q*byId[it.id].precio,0),0))}`;
-  document.getElementById('hoyTk').innerHTML=hoy.length?hoy.slice(0,3).map((p,k)=>`<div class="mtk" style="--r:${[-2,1.5,-1][k]}deg"><h6>${PROV[p.prov].n}</h6>${p.items.slice(0,3).map(it=>`<div class="li"><span>${byId[it.id].n.toLowerCase()}</span><span>${it.q}${byId[it.id].u==='und'?'':byId[it.id].u}</span></div>`).join('')}${p.estado==='confirmado'?'<div style="margin-top:.3vw;color:var(--gr)">✓ pedido</div>':''}</div>`).join(''):'<div class="mtk none">Nada urgente hoy ✓</div>';
-  // semana
-  const wk=Array.from({length:7},(_,d)=>platos(d)), bs=Array.from({length:7},(_,d)=>platos(d,Object.fromEntries(EVENTOS.map(e=>[e.id,false])))), mx=Math.max(...wk,...bs)*1.1;
-  document.getElementById('semN').textContent=`${wk.reduce((a,b)=>a+b,0)} platos`;
-  document.getElementById('mBars').innerHTML=wk.map((v,d)=>{ const up=Math.max(0,v-bs[d]); return `<div class="c ${up?'x2':''}"><div class="n">${v}</div>${up?`<div class="x" style="height:${up/mx*100}%"></div>`:''}<div class="b" style="height:${Math.min(v,bs[d])/mx*100}%"></div></div>`; }).join('');
-  document.getElementById('mDays').innerHTML=wk.map((_,d)=>`<span>${d?DIAS[d]:'hoy'}${EVENTOS.some(e=>e.on&&e.d===d)?' '+EVENTOS.find(e=>e.on&&e.d===d).ic:''}</span>`).join('');
-  // salud
-  const conf=id=>planes.filter(p=>p.estado==='confirmado').reduce((s,p)=>s+p.items.filter(it=>it.id===id).reduce((a,it)=>a+it.q,0),0); const ok=I.filter(x=>cov(x)+conf(x.id)/x.cons>=7).length, pct=ok/I.length;
-  const arc=(p)=>{ const a=Math.PI*(1-p); return `${50+40*Math.cos(a)} ${50-40*Math.sin(a)}`; };
-  document.getElementById('gauge').innerHTML=`<path d="M10 50 A40 40 0 0 1 90 50" fill="none" stroke="#1d1a2b1a" stroke-width="10" stroke-linecap="round"/><path d="M10 50 A40 40 0 0 1 ${arc(pct)}" fill="none" stroke="${pct>.75?'#00a878':pct>.5?'#ffe800':'#ff48b0'}" stroke-width="10" stroke-linecap="round"/>`;
-  document.getElementById('gNum').textContent=Math.round(pct*100)+'%';
-  document.getElementById('gSub').innerHTML=`de tus insumos alcanza toda la semana con lo que tienes <b>y lo que ya confirmaste</b>`;
-  document.getElementById('gMoney').innerHTML=`<span>comprometido<br><b>${money(spend)}</b></span><span style="text-align:right">en bodega<br><b>${money(I.reduce((s,x)=>s+x.stock*x.precio,0))}</b></span>`;
-  // jars
-  document.getElementById('mJars').innerHTML=[...I].sort((a,b)=>cov(a)-cov(b)).slice(0,5).map(x=>{ const cv=cov(x), f=Math.min(1,cv/10), fi=Math.min(1-f,entrante(x.id)/x.cons/10), c=CATS[x.cat].c;
-    return `<div class="mjar ${cv<2.5?'low':''}"><div class="lid"></div><div class="bd"><em>${r1(cv)}d</em><i style="bottom:${f*100}%;height:${fi*100}%;background:repeating-linear-gradient(-45deg,${c} 0 .15vw,transparent .15vw .35vw)"></i><i style="height:${f*100}%;background:${c}"></i></div><small>${x.n}</small></div>`; }).join('');
-  // llegadas
-  const ll=vis.map(p=>({p,a:Math.min(6,llega(p))})).sort((a,b)=>a.a-b.a).slice(0,5);
-  document.getElementById('lleg').innerHTML=ll.map(({p,a})=>`<div class="r"><span class="dt ${a<=1?'t':''}">${a===0?'hoy':DIAS[a]}</span><span class="pin" style="background:${PROV[p.prov].c}">${PROV[p.prov].n[0]}</span><span><b>${PROV[p.prov].n.split(' ')[0]}</b> · ${p.items.length} insumos</span><span class="st" style="color:${p.estado==='confirmado'?'var(--gr)':tarde(p)?'var(--pk)':'inherit'}">${p.estado==='confirmado'?'✓ pedido':tarde(p)?'⚠ tarde':'por pedir'}</span></div>`).join('');
-  // mise dice
-  const low=[...I].sort((a,b)=>cov(a)-cov(b))[0], ev=EVENTOS.filter(e=>e.on&&e.d<7).sort((a,b)=>b.m-a.m)[0];
-  document.getElementById('miseSays').innerHTML=`${ev?`El ${WD[wdOf(ev.d)]} ${ev.m>0?'viene':'hay'} <b>${ev.n.toLowerCase()}</b>: calcula ${ev.m>0?'unos':''} ${Math.abs(Math.round(64*PAT[wdOf(ev.d)]*ev.m))} platos ${ev.m>0?'más':'menos'}. `:''}Lo más urgente es el <b>${low.n.toLowerCase()}</b>: con lo que hay alcanza ${r1(cov(low))} días.`;
-  // plato estrella
-  const st=[...RECETAS].sort((a,b)=>b.ventas*b.precio*margen(b)-a.ventas*a.precio*margen(a))[0];
-  document.getElementById('pStar').innerHTML=`${plateSVG(st)}<div class="pn">${st.n}</div><div class="pm">${Math.round(st.ventas*factor())}/día · margen ${Math.round(margen(st)*100)}%</div>`;
-  const pend=hoy.filter(p=>p.estado!=='confirmado'), next=vis.filter(p=>p.dia>0).sort((a,b)=>a.dia-b.dia).slice(0,3);
-  document.getElementById('hoyFoot').innerHTML=`<div class="nx">Después: ${next.map(p=>`${PROV[p.prov].n.split(' ')[0]} (${DIAS[p.dia]})`).join(' · ')||'nada'}</div>${pend.length?`<button class="btn pk" id="confHoy">Confirmar ${pend.length===1?'la comanda':'las '+pend.length}</button>`:'<span style="color:var(--yl)">✓ todo pedido</span>'}`;
-  const ch=document.getElementById('confHoy'); if(ch) ch.onclick=e=>{ e.stopPropagation(); pend.forEach(p=>p.estado='confirmado'); renderAll(); toast(`✓ ${pend.length} comanda${pend.length>1?'s':''} confirmada${pend.length>1?'s':''} · la salud de la despensa subió`); };
-  document.querySelectorAll('.tile[data-go]').forEach(t=>t.onclick=()=>document.querySelector('.nav li[data-v="'+t.dataset.go+'"]').click());
-  document.getElementById('miseTile').onclick=()=>openMise();
+let pzTyped=false, pzTimer=null;
+function pzBrief(){
+  const vis=planes.filter(p=>p.estado!=='descartado'), pend=vis.filter(p=>p.dia===0&&p.estado!=='confirmado');
+  const nIt=pend.reduce((s,p)=>s+p.items.length,0), low=[...I].sort((a,b)=>cov(a)-cov(b))[0];
+  const wk=Array.from({length:7},(_,d)=>platos(d)), pk=wk.indexOf(Math.max(...wk)), ev=EVENTOS.find(e=>e.on&&e.d===pk);
+  const late=vis.filter(p=>p.estado!=='confirmado'&&tarde(p));
+  const parts=[];
+  parts.push(pend.length?`Hoy toca pedir a [b]${pend.map(p=>PROV[p.prov].n).join(' y a ')}[/b]: ${nIt} insumos en total.`:`Los pedidos de hoy [hl]ya están confirmados[/hl] ✓.`);
+  parts.push(cov(low)<1.5?`El [pk]${low.n.toLowerCase()}[/pk] se acaba mañana, así que no lo dejes para después.`:`Lo más justo es el [pk]${low.n.toLowerCase()}[/pk]: alcanza ${r1(cov(low))} días.`);
+  if(late.length) parts.push(`Ojo: lo de [pk]${PROV[late[0].prov].n}[/pk] llegaría tarde.`);
+  const FULL={jue:'jueves',vie:'viernes','sáb':'sábado',dom:'domingo',lun:'lunes',mar:'martes','mié':'miércoles'};
+  parts.push(`${ev?`Y el ${FULL[DIAS[pk]]} es el día fuerte por el ${ev.n.charAt(0).toLowerCase()+ev.n.slice(1)} ${ev.ic}: calcula [hl]${wk[pk]} platos[/hl].`:`El día más fuerte es el ${FULL[DIAS[pk]]}, con [hl]${wk[pk]} platos[/hl].`}`);
+  return {txt:parts.join(' '),vis,pend,nIt,low,wk,pk,ev,late};
 }
+const pzHTML=t=>t.replace(/\[b\](.*?)\[\/b\]/g,'<b>$1</b>').replace(/\[pk\](.*?)\[\/pk\]/g,'<b class="pk">$1</b>').replace(/\[hl\](.*?)\[\/hl\]/g,'<b class="hl">$1</b>');
+const pzPlain=t=>t.replace(/\[\/?(b|pk|hl)\]/g,'');
+function renderPanorama(animate){
+  const d=pzBrief(), rows=document.querySelectorAll('#v-panorama .pz-row'), say=document.getElementById('pzSay');
+  const tot=p=>p.items.reduce((a,it)=>a+it.q*byId[it.id].precio,0);
+  // tarjetas de acción
+  const x=d.low, px=planDe(x.id);
+  document.getElementById('pzActs').innerHTML=`
+    <div class="pz-act ${d.pend.length?'hot':'ok'}"><div class="t">Pedido de hoy</div><b>${d.pend.length?`${d.pend.map(p=>PROV[p.prov].n.split(' ')[0]).join(' + ')} · ${d.nIt} insumos`:'Todo pedido ✓'}</b>${d.pend.length?`<button class="btn pk" id="pzConf">Confirmar ${money(d.pend.reduce((s,p)=>s+tot(p),0))}</button>`:`<button class="btn" data-go="planes">Ver planes</button>`}</div>
+    <div class="pz-act"><div class="t">Se acaba</div><b>${x.n} · ${r1(cov(x))} día${r1(cov(x))===1?'':'s'}</b><button class="btn" data-sel="${x.id}">Ver despensa</button></div>
+    <div class="pz-act"><div class="t">${DIAS[d.pk]==='sáb'?'Sábado':'Día fuerte'}</div><b>${d.ev?d.ev.ic+' ':''}${d.wk[d.pk]} platos</b><button class="btn" data-go="pronostico">Ver pronóstico</button></div>`;
+  const cf=document.getElementById('pzConf'); if(cf) cf.onclick=()=>{ d.pend.forEach(p=>p.estado='confirmado'); pzTyped=false; renderAll(); pzPlay(); toast(`✓ Pedidos de hoy confirmados · <a data-go="planes">ver planes</a>`); };
+  document.querySelectorAll('#pzActs [data-go]').forEach(b=>b.onclick=()=>goV(b.dataset.go));
+  document.querySelectorAll('#pzActs [data-sel]').forEach(b=>b.onclick=()=>{ selI=b.dataset.sel; goV('despensa'); });
+  // sugerencias
+  const sg=['¿Qué pasa si llueve el viernes?','¿Qué plato me deja menos margen?',d.late.length?'¿Algo va a llegar tarde?':'¿Qué se me puede acabar esta semana?'];
+  document.getElementById('pzSugs').innerHTML=sg.map(q=>`<span>${q}</span>`).join('');
+  document.querySelectorAll('#pzSugs span').forEach(s=>s.onclick=()=>{ openMise(); setTimeout(()=>ask(s.textContent),400); });
+  if(!pzTyped){ return; }
+  rows.forEach(r=>r.classList.add('in')); say.innerHTML=pzHTML(d.txt);
+}
+function pzPlay(){
+  const d=pzBrief(), rows=document.querySelectorAll('#v-panorama .pz-row'), say=document.getElementById('pzSay'), plain=pzPlain(d.txt), rich=pzHTML(d.txt);
+  clearTimeout(pzTimer); rows.forEach(r=>r.classList.remove('in')); say.innerHTML='';
+  setTimeout(()=>rows[0].classList.add('in'),80); setTimeout(()=>rows[1].classList.add('in'),420);
+  let i=0; const step=()=>{ i+=2; if(i>=plain.length){ say.innerHTML=rich; pzTyped=true; setTimeout(()=>rows[2].classList.add('in'),150); return; }
+    say.innerHTML=plain.slice(0,i)+'<span class="pz-caret"></span>'; pzTimer=setTimeout(step,20); };
+  pzTimer=setTimeout(step,700);
+}
+const goV=v=>document.querySelector('.nav li[data-v="'+v+'"]').click();
+document.getElementById('pzForm').onsubmit=e=>{ e.preventDefault(); const q=document.getElementById('pzIn').value; if(!q.trim()) return; document.getElementById('pzIn').value=''; openMise(); setTimeout(()=>ask(q),400); };
 
 /* ================== MISE: asistente ================== */
 const VNAME={panorama:'Panorama',despensa:'Despensa',planes:'Planes de compra',pronostico:'Pronóstico',proveedores:'Proveedores',recetas:'Recetas'};
@@ -952,7 +915,7 @@ document.getElementById('miseOv').onclick=e=>{ if(e.target.id==='miseOv') closeM
 document.getElementById('mForm').onsubmit=e=>{ e.preventDefault(); ask(document.getElementById('mIn').value); };
 addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('miseOv').classList.contains('on')?closeMise():openMise(); } if(e.key==='Escape') closeMise(); });
 function renderAll(){ renderSide(); renderDespensa(); renderPlanes(); renderPronostico(); renderProveedores(); renderRecetas(); renderPanorama(); }
-renderAll();
+renderAll(); pzPlay();
 </script>
 </body>
 </html>

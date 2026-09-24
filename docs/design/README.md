@@ -10,7 +10,7 @@ Esta carpeta guarda la definición visual y funcional acordada antes de escribir
 
 | Pestaña | Qué muestra | Captura |
 |---|---|---|
-| Panorama | Resumen vivo de las demás pestañas | `capturas/panorama.png` |
+| Panorama | Conversación con mise: saludo, resumen del día escrito en vivo y tres tarjetas de acción | `capturas/panorama.png` |
 | Despensa | Estantería de frascos; el nivel son los días que alcanza cada insumo | `capturas/despensa.png` |
 | Planes de compra | Comandas por proveedor sobre los próximos 7 días, editables y arrastrables | `capturas/planes.png` |
 | Pronóstico | Platos esperados por día (barras), con eventos que suman o restan | `capturas/pronostico.png` |
@@ -25,6 +25,7 @@ Esta carpeta guarda la definición visual y funcional acordada antes de escribir
 - **Paleta:** flúor original. Papel `#f6f1e7`, tinta `#1d1a2b`, rosa `#ff48b0`, amarillo `#ffe800`, azul `#0078bf`, naranja `#ff6c2f`, verde `#00a878`. Las versiones atenuadas quedan en `exploraciones/04` por si el equipo quiere bajar la intensidad.
 - **Tipografía:** Bricolage Grotesque (titulares), Instrument Sans (texto), DM Mono (datos y etiquetas).
 - **Pronóstico:** barras por día, hablando en platos y no en porcentajes. Ver `exploraciones/05`.
+- **Panorama:** “mise primero”, variante “conversación en curso”: mise saluda, escribe el resumen del día con los datos vivos y deja tres tarjetas de acción, con la barra para responderle. Ver `exploraciones/06` a `08`.
 
 ## Modelo que conecta todo
 
@@ -35,5 +36,4 @@ Esta carpeta guarda la definición visual y funcional acordada antes de escribir
 
 ## Pendiente
 
-- **Panorama:** se mantiene la versión del prototipo por ahora. Hay tres versiones más calmadas para evaluar en `exploraciones/06-panorama-opciones.html`.
 - **Spec técnico:** Angular + Bootstrap (grilla y utilidades) + CSS propio, datos en memoria con signals/computed, IA con OpenRouter (Gemini 2.5 Flash) mediante una función en Vercel, deploy en Vercel.

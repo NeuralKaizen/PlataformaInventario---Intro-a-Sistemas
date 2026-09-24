@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>mise primero: variantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1b1a17; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; }
+  header.q { padding:22px 40px 14px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:28px; } header.q h1 em { color:#ff48b0; }
+  header.q p { color:#a39d90; font-size:14px; max-width:600px; margin-top:6px; line-height:1.5; }
+  .cards { display:flex; gap:8px; flex-wrap:wrap; }
+  .card { cursor:pointer; border:1px solid #3a372f; border-radius:999px; padding:9px 16px; font-size:14px; background:#23211d; transition:.25s; }
+  .card.active { background:#efe9dd; color:#16140f; }
+  .stagewrap { padding:0 40px 20px; }
+  .stage { position:relative; width:100%; aspect-ratio:16/9.4; border-radius:18px; overflow:hidden; display:flex;
+    --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#ff48b0; --yl:#ffe800; --bl:#0078bf; --or:#ff6c2f; --gr:#00a878;
+    background:var(--paper); color:var(--ink); }
+  .grain { position:absolute; inset:0; opacity:.28; mix-blend-mode:multiply; pointer-events:none; z-index:50;
+     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .notes { padding:0 40px 40px; display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .note { font-size:13px; line-height:1.55; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; opacity:.45; transition:.3s; }
+  .note.on { opacity:1; } .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#ff48b0; font-style:normal; }
+
+  .side { position:relative; z-index:6; width:16.5%; padding:2vw 1.2vw 1.2vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; display:flex; flex-direction:column; flex:none; }
+  .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; }
+  .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.6vw; height:.6vw; border-radius:50%; background:var(--yl); }
+  .nav { list-style:none; display:flex; flex-direction:column; gap:.35vw; margin-top:auto; margin-bottom:auto; }
+  .nav li { display:flex; align-items:center; gap:.8vw; font-size:1.05vw; font-weight:500; padding:.65vw .8vw; border-radius:.7vw; opacity:.62; }
+  .nav li.cur { opacity:1; background:var(--pk); color:#fff; font-weight:700; box-shadow:.25vw .25vw 0 var(--yl); }
+  .nav li.cur .ic { background:#fff !important; }
+  .ic { width:1.1vw; height:1.1vw; flex:none; } .ic.c{border-radius:50%} .ic.s{border-radius:.2vw} .ic.t{clip-path:polygon(50% 0,100% 100%,0 100%)} .ic.h{border-radius:50% 50% 0 0} .ic.d{transform:rotate(45deg) scale(.8);border-radius:.15vw} .ic.p{border-radius:50% 50% 50% 0}
+  .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.82vw; font-weight:600; padding:.7vw .9vw; border-radius:99px; background:var(--yl); color:var(--ink); margin-bottom:.8vw; }
+  .orb { width:1.05vw; height:1.05vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 4s linear infinite; flex:none; }
+  @keyframes spin { to { transform:rotate(360deg);} }
+  .who { font-size:.7vw; opacity:.8; } .who b { display:block; font-size:.8vw; }
+  .main { flex:1; position:relative; overflow:hidden; }
+  .scene { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .5s; }
+  .scene.on { opacity:1; pointer-events:auto; }
+  .btn { font-family:'Instrument Sans'; font-weight:700; font-size:.78vw; padding:.6vw 1vw; border-radius:99px; border:2px solid var(--ink); background:var(--card); cursor:pointer; transition:.15s; }
+  .btn:hover { transform:translateY(-2px); } .btn.pk { background:var(--pk); border-color:var(--pk); color:#fff; } .btn.ink { background:var(--ink); color:var(--paper); }
+  .ch { display:inline-flex; align-items:center; gap:.35vw; padding:0 .6vw; border-radius:99px; border:2px solid var(--ink); font-weight:700; cursor:pointer; line-height:1.45; box-shadow:.15vw .15vw 0 var(--ink); transition:.15s; white-space:nowrap; }
+  .ch:hover, .ch.on { transform:translateY(-2px); box-shadow:.15vw .3vw 0 var(--ink); }
+  .ch i { width:.7vw; height:.7vw; border-radius:50%; display:inline-block; }
+  .askbar { display:flex; align-items:center; gap:.8vw; padding:.5vw .5vw .5vw 1.4vw; border:2px solid var(--ink); border-radius:99px; background:var(--card); box-shadow:.35vw .35vw 0 var(--pk); }
+  .askbar span { flex:1; text-align:left; font-size:.95vw; opacity:.5; }
+  .askbar button { width:2.5vw; height:2.5vw; border-radius:50%; border:0; background:var(--pk); color:#fff; font-size:1.05vw; }
+  .sugs { display:flex; gap:.5vw; flex-wrap:wrap; }
+  .sugs span { font-size:.72vw; padding:.35vw .8vw; border-radius:99px; border:1.5px solid #1d1a2b55; background:var(--card); cursor:pointer; }
+  .sugs span:hover { background:var(--yl); }
+  .kick { font-family:'DM Mono'; font-size:.66vw; letter-spacing:.14em; text-transform:uppercase; opacity:.6; }
+
+  /* ===== A · conversación en curso ===== */
+  #A { display:flex; flex-direction:column; padding:2.2vw 5vw 1.8vw; }
+  #A .thread { flex:1; display:flex; flex-direction:column; gap:1.1vw; overflow:hidden; justify-content:center; }
+  #A .row { display:flex; gap:1vw; align-items:flex-start; opacity:0; transform:translateY(1vw); transition:.5s cubic-bezier(.3,1.3,.5,1); }
+  #A .row.in { opacity:1; transform:none; }
+  #A .av { width:2.6vw; height:2.6vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 6s linear infinite; flex:none; box-shadow:0 0 0 .25vw var(--paper),0 0 0 .38vw var(--ink); }
+  #A .say { font-size:1.35vw; line-height:1.6; font-weight:500; max-width:52vw; }
+  #A .say.hi { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2.8vw; letter-spacing:-.05em; line-height:1; }
+  #A .say.hi .pk { color:var(--pk); }
+  #A .acts { display:flex; gap:1vw; margin-left:3.6vw; }
+  #A .act { width:15vw; background:var(--card); border:2px solid var(--ink); border-radius:1.1vw; padding:.9vw 1vw; box-shadow:.3vw .35vw 0 var(--ink); }
+  #A .act .t { font-family:'DM Mono'; font-size:.58vw; opacity:.6; text-transform:uppercase; letter-spacing:.1em; }
+  #A .act b { display:block; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.2vw; letter-spacing:-.03em; margin:.3vw 0 .6vw; line-height:1.1; }
+  #A .foot { margin-top:1.4vw; display:flex; flex-direction:column; gap:.7vw; }
+  #A .caret::after { content:'▍'; color:var(--pk); animation:blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* ===== B · el brief con lupas ===== */
+  #B { display:flex; }
+  #B .left { width:52%; padding:3vw 2vw 2vw 3.4vw; display:flex; flex-direction:column; }
+  #B .left .o { width:3.4vw; height:3.4vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--gr),var(--pk)); animation:spin 8s linear infinite; box-shadow:0 0 0 .35vw var(--paper),0 0 0 .5vw var(--ink); }
+  #B .hi { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3.2vw; letter-spacing:-.05em; line-height:1; margin-top:1.4vw; } #B .hi .pk { color:var(--pk); }
+  #B .brief { font-size:1.35vw; line-height:1.9; margin-top:1.2vw; font-weight:500; }
+  #B .hint { font-family:'DM Mono'; font-size:.64vw; opacity:.55; margin-top:.8vw; }
+  #B .left .askbar { margin-top:auto; }
+  #B .right { flex:1; position:relative; margin:2vw 2vw 2vw 0; border-radius:1.6vw; background:var(--card); border:2px solid var(--ink); box-shadow:.45vw .5vw 0 var(--ink); overflow:hidden; }
+  #B .lens { position:absolute; inset:0; padding:2vw; opacity:0; transform:scale(.97); transition:.4s; display:flex; flex-direction:column; }
+  #B .lens.on { opacity:1; transform:none; }
+  #B .lens h3 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.04em; line-height:1; margin-top:.4vw; }
+  #B .lens p { font-size:.85vw; line-height:1.55; margin-top:.6vw; opacity:.8; }
+  #B .lens .foot { margin-top:auto; display:flex; gap:.5vw; }
+  #B .tk { width:13vw; background:var(--paper); padding:1vw .9vw 1.2vw; font-family:'DM Mono'; font-size:.74vw; margin:1.4vw auto 0; transform:rotate(-2deg); box-shadow:.35vw .45vw 0 var(--ink); position:relative; }
+  #B .tk::before { content:''; position:absolute; top:-.7vw; left:50%; width:1.4vw; height:1.1vw; margin-left:-.7vw; background:var(--ink); border-radius:.2vw; }
+  #B .tk h5 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.1vw; margin-bottom:.5vw; }
+  #B .tk .li { display:flex; justify-content:space-between; border-bottom:1px dotted #1d1a2b55; padding:.25vw 0; }
+  #B .jar { width:7vw; margin:1.4vw auto 0; } #B .jar .lid { width:78%; height:.9vw; margin:auto; background:var(--ink); border-radius:.3vw .3vw 0 0; }
+  #B .jar .bd { height:10vw; border:3px solid var(--ink); border-radius:1vw 1vw 1.6vw 1.6vw; position:relative; overflow:hidden; background:var(--paper); animation:alarm 1.6s infinite; }
+  @keyframes alarm { 50% { border-color:var(--pk); } }
+  #B .jar .bd i { position:absolute; left:0; right:0; bottom:0; height:12%; background:var(--gr); }
+  #B .jar .bd em { position:absolute; left:0; right:0; top:.6vw; text-align:center; font-style:normal; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.4vw; }
+  #B .bars { display:flex; gap:.5vw; align-items:flex-end; height:12vw; margin-top:1.4vw; }
+  #B .bars div { flex:1; display:flex; flex-direction:column; justify-content:flex-end; height:100%; font-family:'DM Mono'; font-size:.6vw; text-align:center; }
+  #B .bars b { display:block; background:var(--bl); border-radius:.4vw .4vw .1vw .1vw; } #B .bars b.x { background:repeating-linear-gradient(-45deg,var(--pk) 0 .25vw,#ff48b099 .25vw .5vw); border-radius:.4vw .4vw 0 0; }
+  #B .money { font-family:'Bricolage Grotesque'; font-weight:800; font-size:6vw; letter-spacing:-.05em; color:var(--gr); margin-top:1vw; line-height:1; }
+
+  /* ===== C · mise reparte cartas ===== */
+  #C { display:flex; flex-direction:column; align-items:center; padding:2.4vw 4vw 1.8vw; }
+  #C .top { display:flex; align-items:center; gap:1vw; align-self:stretch; }
+  #C .top .o { width:3vw; height:3vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--gr),var(--pk)); animation:spin 8s linear infinite; box-shadow:0 0 0 .3vw var(--paper),0 0 0 .45vw var(--ink); }
+  #C .hi { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2.6vw; letter-spacing:-.05em; line-height:1; } #C .hi .pk { color:var(--pk); }
+  #C .sub { font-size:1vw; opacity:.7; margin-top:.3vw; }
+  #C .count { margin-left:auto; font-family:'DM Mono'; font-size:.7vw; text-align:right; }
+  #C .count b { font-family:'Bricolage Grotesque'; font-size:2vw; display:block; }
+  #C .deck { flex:1; position:relative; width:100%; }
+  #C .cd { position:absolute; left:50%; top:50%; width:19vw; height:24vw; margin:-12vw 0 0 -9.5vw; border-radius:1.4vw; border:2.5px solid var(--ink); padding:1.4vw; display:flex; flex-direction:column; transition:transform .55s cubic-bezier(.3,1.2,.5,1), opacity .4s; box-shadow:.4vw .5vw 0 var(--ink); cursor:pointer; }
+  #C .cd .n { font-family:'DM Mono'; font-size:.64vw; opacity:.7; }
+  #C .cd .em { font-size:3vw; margin-top:.6vw; }
+  #C .cd h3 { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.8vw; letter-spacing:-.04em; line-height:1.02; margin-top:.6vw; }
+  #C .cd p { font-size:.85vw; line-height:1.5; margin-top:.6vw; }
+  #C .cd .foot { margin-top:auto; display:flex; gap:.5vw; }
+  #C .cd.gone { transform:translate(60vw,-6vw) rotate(25deg) !important; opacity:0; }
+  #C .bottom { width:46vw; display:flex; flex-direction:column; gap:.7vw; align-items:center; }
+  #C .bottom .askbar { width:100%; }
+
+  /* ===== D · mise, en grande ===== */
+  #D { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  #D canvas { position:absolute; inset:0; width:100%; height:100%; }
+  #D .txt { position:relative; z-index:2; margin-top:17vw; max-width:48vw; }
+  #D .hi { font-family:'Fraunces',serif; font-weight:400; font-size:2.6vw; line-height:1.2; letter-spacing:-.02em; }
+  #D .hi em { font-style:italic; color:var(--pk); }
+  #D .hi b { font-weight:700; background:linear-gradient(transparent 60%, #ffe800 60%); }
+  #D .row { display:flex; gap:.7vw; justify-content:center; margin-top:1.6vw; position:relative; z-index:2; }
+  #D .mic { width:3.2vw; height:3.2vw; border-radius:50%; background:var(--ink); color:var(--paper); display:flex; align-items:center; justify-content:center; font-size:1.2vw; border:0; }
+  #D .ab { width:34vw; }
+</style>
+</head>
+<body>
+<header class="q">
+  <div><h1>mise primero: <em>cuatro formas</em></h1>
+  <p>En las cuatro, mise te recibe y te habla. Cambian el ritmo y lo que puedes hacer con lo que te dice. Tienen animación, así que interactúa con cada una: en la B pasa el mouse por las fichas, en la C toca las cartas y en la D mueve el mouse.</p></div>
+  <div class="cards">
+    <div class="card active" onclick="pick(this,'A')" data-choice="A-conversacion">A · Conversación en curso</div>
+    <div class="card" onclick="pick(this,'B')" data-choice="B-lupas">B · Brief con lupas</div>
+    <div class="card" onclick="pick(this,'C')" data-choice="C-cartas">C · mise reparte cartas</div>
+    <div class="card" onclick="pick(this,'D')" data-choice="D-en-grande">D · mise en grande</div>
+  </div>
+</header>
+<div class="stagewrap"><div class="stage">
+  <div class="grain"></div>
+  <aside class="side">
+    <div class="brand">mise</div>
+    <ul class="nav"><li class="cur"><span class="ic c" style="background:var(--pk)"></span>Panorama</li><li><span class="ic s" style="background:var(--or)"></span>Despensa</li><li><span class="ic t" style="background:var(--yl)"></span>Planes de compra</li><li><span class="ic h" style="background:var(--bl)"></span>Pronóstico</li><li><span class="ic d" style="background:var(--pk)"></span>Proveedores</li><li><span class="ic p" style="background:var(--bl)"></span>Recetas</li></ul>
+    <div class="askbtn"><span class="orb"></span>Pregúntale a mise</div>
+    <div class="who"><b>La Olla de Nico</b>Chapinero · 64 platos/día</div>
+  </aside>
+  <main class="main">
+
+  <!-- A -->
+  <section class="scene on" id="A">
+    <div class="thread" id="thA">
+      <div class="row"><span class="av"></span><div class="say hi">Buenos días, <span class="pk">Nico</span>.</div></div>
+      <div class="row"><span class="av" style="visibility:hidden"></span><div class="say" id="tyA"></div></div>
+      <div class="row acts">
+        <div class="act"><div class="t">Pedido de hoy</div><b>Fruver + Plaza · 7 insumos</b><button class="btn pk">Confirmar $299k</button></div>
+        <div class="act"><div class="t">Se acaba</div><b>Cilantro · 1,2 días</b><button class="btn">Ver despensa</button></div>
+        <div class="act"><div class="t">Sábado</div><b>⚽ 104 platos</b><button class="btn">Ver pronóstico</button></div>
+      </div>
+    </div>
+    <div class="foot"><div class="sugs"><span>¿Qué pasa si llueve el viernes?</span><span>¿Qué plato me deja menos?</span><span>¿Algo llega tarde?</span></div><div class="askbar"><span>Respóndele a mise…</span><button>↑</button></div></div>
+  </section>
+
+  <!-- B -->
+  <section class="scene" id="B">
+    <div class="left">
+      <div class="o"></div>
+      <div class="hi">Buenos días, <span class="pk">Nico</span>.</div>
+      <div class="brief">Hoy toca pedir a <span class="ch" data-l="ped" style="background:#00a87826"><i style="background:var(--gr)"></i>Fruver El Paisa</span> y a <span class="ch" data-l="ped" style="background:#ff6c2f22"><i style="background:var(--or)"></i>Plaza 7 de agosto</span>. El <span class="ch" data-l="cil" style="background:#ff48b022"><i style="background:var(--pk)"></i>cilantro</span> se acaba mañana. El <span class="ch" data-l="sab" style="background:#ffe80066">⚽ sábado</span> viene el partido: unos 21 platos más. Esta semana gastas <span class="ch" data-l="din" style="background:var(--card)">11% menos</span> en compras.</div>
+      <div class="hint">↳ pasa el mouse sobre las fichas para ver el detalle</div>
+      <div class="askbar"><span>Pregúntale lo que quieras a mise…</span><button>↑</button></div>
+    </div>
+    <div class="right">
+      <div class="lens on" id="L-ped"><div class="kick">Pedido de hoy</div><h3>2 comandas, 7 insumos</h3><p>Si confirmas antes de las 4 p. m., todo llega mañana viernes.</p><div class="tk"><h5>Fruver El Paisa</h5><div class="li"><span>tomate</span><span>13,9 kg</span></div><div class="li"><span>cebolla</span><span>9,4 kg</span></div><div class="li"><span>cilantro</span><span>2 kg</span></div></div><div class="foot"><button class="btn pk">Confirmar $299k</button><button class="btn">Revisar</button></div></div>
+      <div class="lens" id="L-cil"><div class="kick">Despensa</div><h3>Cilantro: 1,2 días</h3><p>Hay 0,3 kg y usas 0,25 kg al día (ajiaco y patacón). El pedido de Fruver lo repone mañana.</p><div class="jar"><div class="lid"></div><div class="bd"><em>1,2d</em><i></i></div></div><div class="foot"><button class="btn ink">Ver despensa</button></div></div>
+      <div class="lens" id="L-sab"><div class="kick">Pronóstico</div><h3>Sábado: 104 platos</h3><p>El partido suma unos 21 platos a un sábado que ya es fuerte.</p><div class="bars">${''}</div><div class="foot"><button class="btn ink">Ver pronóstico</button></div></div>
+      <div class="lens" id="L-din"><div class="kick">Bolsillo</div><h3>Gastas $1,7M esta semana</h3><div class="money">−11%</div><p>frente a la semana pasada ($1,9M). Pedir a tiempo evita las compras de urgencia, que salen más caras.</p><div class="foot"><button class="btn ink">Ver planes</button></div></div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="scene" id="C">
+    <div class="top"><div class="o"></div><div><div class="hi">Buenos días, <span class="pk">Nico</span>.</div><div class="sub">Te tengo 4 cosas para hoy. Resuélvelas una por una.</div></div><div class="count"><b id="cLeft">4</b>pendientes</div></div>
+    <div class="deck" id="deck"></div>
+    <div class="bottom"><div class="askbar"><span>¿Algo más? Pregúntale a mise…</span><button>↑</button></div></div>
+  </section>
+
+  <!-- D -->
+  <section class="scene" id="D">
+    <canvas id="cvD"></canvas>
+    <div class="txt"><div class="hi">Buenos días, Nico. Hoy toca <b>pedir a Fruver y a la Plaza</b>; el <em>cilantro</em> no llega a mañana. El sábado hay partido: prepárate para <b>104 platos</b>.</div></div>
+    <div class="row"><div class="askbar ab"><span>Pregúntale a mise…</span><button>↑</button></div><button class="mic">🎙</button></div>
+    <div class="row sugs"><span>Confirma los pedidos de hoy</span><span>¿Y si llueve el viernes?</span><span>Muéstrame la despensa</span></div>
+  </section>
+
+  </main>
+</div></div>
+<div class="notes">
+  <div class="note on" id="nA"><b>A · Conversación en curso</b>El Panorama es un <i>chat que ya empezó</i>: mise saluda, escribe el resumen en vivo y deja tres tarjetas de acción, como respuestas. La barra de abajo invita a responderle. La plataforma se siente como hablar con alguien.</div>
+  <div class="note" id="nB"><b>B · Brief con lupas</b>A la izquierda, el párrafo de mise. A la derecha, un <i>lienzo que cambia</i> según la ficha que tocas: el proveedor muestra su comanda, el insumo su frasco, el sábado sus barras y el dinero el ahorro. Es limpio y a la vez tiene profundidad.</div>
+  <div class="note" id="nC"><b>C · mise reparte cartas</b>mise te da <i>una pila de cartas</i>, cada una con una tarea del día. Resuelves una y sale volando, hasta que quedas en cero. Es lo más memorable y casi un juego: el Panorama es tu lista de pendientes.</div>
+  <div class="note" id="nD"><b>D · mise en grande</b>Una <i>presencia viva</i> en el centro (una forma riso que respira y reacciona al mouse) y una sola frase grande en serif. Hay micrófono para “hablarle”. Es la más artística y minimalista.</div>
+</div>
+<script>
+function pick(el,s){ document.querySelectorAll('.card').forEach(c=>c.classList.remove('active')); el.classList.add('active');
+  document.querySelectorAll('.scene').forEach(x=>x.classList.toggle('on',x.id===s)); document.querySelectorAll('.note').forEach(x=>x.classList.toggle('on',x.id==='n'+s));
+  if(window.brainstorm) window.brainstorm.choice(el.dataset.choice); if(s==='A') playA(); if(s==='D') initD(); }
+
+/* A */
+let tA;
+function playA(){ const rows=document.querySelectorAll('#A .row'), el=document.getElementById('tyA'); rows.forEach(r=>r.classList.remove('in')); el.innerHTML=''; clearTimeout(tA);
+  const txt='Hoy toca pedir a Fruver El Paisa y a la Plaza 7 de agosto: 7 insumos en total. El cilantro se acaba mañana, así que no lo dejes para después. Y el sábado hay partido: calcula 21 platos más.';
+  setTimeout(()=>rows[0].classList.add('in'),100); setTimeout(()=>rows[1].classList.add('in'),500);
+  let i=0; const step=()=>{ i+=2; el.innerHTML=txt.slice(0,i).replace('Fruver El Paisa','<b>Fruver El Paisa</b>').replace('cilantro','<b style="color:var(--pk)">cilantro</b>')+(i<txt.length?'<span class="caret"></span>':''); if(i<txt.length) tA=setTimeout(step,22); else setTimeout(()=>rows[2].classList.add('in'),200); };
+  tA=setTimeout(step,800); }
+playA();
+
+/* B */
+document.querySelector('#L-sab .bars').innerHTML=[64,74,83,70,54,58,61].map((v,i)=>`<div>${[0,0,21,0,8,0,0][i]?`<b class="x" style="height:${[0,0,21,0,8,0,0][i]/104*100}%"></b>`:''}<b style="height:${v/104*100}%;${[0,0,21,0,8,0,0][i]?'border-radius:0 0 .1vw .1vw':''}"></b>${['hoy','vie','sáb','dom','lun','mar','mié'][i]}</div>`).join('');
+document.querySelectorAll('#B .ch').forEach(c=>c.onmouseenter=()=>{ document.querySelectorAll('#B .ch').forEach(x=>x.classList.remove('on')); c.classList.add('on'); document.querySelectorAll('#B .lens').forEach(l=>l.classList.toggle('on',l.id==='L-'+c.dataset.l)); });
+
+/* C */
+const CARDS=[
+ {bg:'#ff48b0',fg:'#fff',em:'🧾',n:'1 de 4 · urgente',h:'Confirma el pedido de hoy',p:'Fruver El Paisa y Plaza 7 de agosto: 7 insumos por $299k. Llega mañana.',b:'Confirmar'},
+ {bg:'#fffdf8',fg:'#1d1a2b',em:'🌿',n:'2 de 4',h:'El cilantro se acaba mañana',p:'Va en el pedido de Fruver. ¿Subimos a 2,5 kg por el partido?',b:'Sí, súbelo'},
+ {bg:'#ffe800',fg:'#1d1a2b',em:'⚽',n:'3 de 4',h:'Sábado de partido: 104 platos',p:'21 platos más de lo normal. Ya lo conté en los pedidos.',b:'Entendido'},
+ {bg:'#0078bf',fg:'#fff',em:'🥩',n:'4 de 4',h:'Carnes JR tarda 2 días',p:'Si pides mañana, la pechuga llega el domingo justo a tiempo.',b:'Recordármelo mañana'}];
+function dealC(){ const d=document.getElementById('deck'); d.innerHTML=CARDS.map((c,i)=>`<div class="cd" data-i="${i}" style="background:${c.bg};color:${c.fg};z-index:${10-i};transform:translate(${i*1.6}vw,${i*.8}vw) rotate(${[-4,3,-2,5][i]}deg)"><div class="n">${c.n}</div><div class="em">${c.em}</div><h3>${c.h}</h3><p>${c.p}</p><div class="foot"><button class="btn ${c.bg==='#ff48b0'?'ink':'pk'}">${c.b}</button><button class="btn" style="background:transparent;color:inherit;border-color:currentColor">Después</button></div></div>`).join('');
+  let left=CARDS.length; document.getElementById('cLeft').textContent=left;
+  d.querySelectorAll('.cd').forEach(c=>c.querySelectorAll('button').forEach(b=>b.onclick=()=>{ c.classList.add('gone'); left--; document.getElementById('cLeft').textContent=left;
+    d.querySelectorAll('.cd:not(.gone)').forEach((x,k)=>x.style.transform=`translate(${k*1.6}vw,${k*.8}vw) rotate(${[-4,3,-2,5][k]}deg)`);
+    if(!left) setTimeout(()=>{ d.innerHTML='<div style="position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:4vw">✓</div><div style="font-family:Bricolage Grotesque;font-weight:800;font-size:2.4vw;letter-spacing:-.04em">Todo listo por hoy.</div><div class="btn" style="display:inline-block;margin-top:1vw" onclick="dealC()">Volver a repartir</div></div>'; },500); })); }
+dealC();
+
+/* D */
+let rafD;
+function initD(){ const c=document.getElementById('cvD'), r=c.getBoundingClientRect(), dp=devicePixelRatio||1; if(!r.width) return; c.width=r.width*dp; c.height=r.height*dp; const x=c.getContext('2d'); x.setTransform(dp,0,0,dp,0,0);
+  const W=r.width,H=r.height, cx=W/2, cy=H*.3; let m={x:cx,y:cy}; c.parentElement.onmousemove=e=>{ const rr=c.getBoundingClientRect(); m={x:e.clientX-rr.left,y:e.clientY-rr.top}; };
+  const cols=['#ff48b0','#ffe800','#0078bf','#00a878']; cancelAnimationFrame(rafD);
+  const fr=ts=>{ const t=ts/1000; x.clearRect(0,0,W,H); x.globalCompositeOperation='multiply';
+    cols.forEach((col,k)=>{ const ang=k*Math.PI/2+t*.25, ox=Math.cos(ang)*W*.04+(m.x-cx)*.03*(k+1)/2, oy=Math.sin(ang)*W*.03+(m.y-cy)*.03*(k+1)/2, R=W*.07*(1+.05*Math.sin(t*1.2+k));
+      x.beginPath(); for(let i=0;i<=60;i++){ const a=i/60*Math.PI*2, rr=R*(1+.09*Math.sin(a*3+t*1.1+k)+.05*Math.sin(a*5-t*.8+k*2)); const px=cx+ox+Math.cos(a)*rr, py=cy+oy+Math.sin(a)*rr; i?x.lineTo(px,py):x.moveTo(px,py);} x.closePath();
+      x.fillStyle=col; x.globalAlpha=k===1?.7:.42; x.fill(); });
+    x.globalAlpha=1; x.globalCompositeOperation='source-over';
+    // halftone dots overlay
+    x.fillStyle='rgba(29,26,43,.12)'; for(let gx=cx-W*.13;gx<cx+W*.13;gx+=9) for(let gy=cy-W*.13;gy<cy+W*.13;gy+=9){ const d=Math.hypot(gx-cx,gy-cy)/(W*.13); if(d<1){ x.beginPath(); x.arc(gx,gy,1.6*(1-d),0,7); x.fill(); } }
+    rafD=requestAnimationFrame(fr); };
+  rafD=requestAnimationFrame(fr); }
+</script>
+</body>
+</html>
