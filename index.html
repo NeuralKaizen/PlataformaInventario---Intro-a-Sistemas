@@ -25,22 +25,35 @@
   .disp { font-family:'Bricolage Grotesque'; font-weight:800; letter-spacing:-.04em; }
 
   /* ---------- sidebar (barra de tinta) ---------- */
-  .side { position:relative; z-index:6; width:16.5%; padding:2vw 1.2vw 1.2vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; display:flex; flex-direction:column; flex:none; }
-  .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; }
-  .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.6vw; height:.6vw; border-radius:50%; background:var(--yl); }
+  .side { position:relative; z-index:6; width:16.5%; padding:2vw 1.2vw 1.2vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; display:flex; flex-direction:column; flex:none; transition:width .38s cubic-bezier(.4,0,.2,1), padding .38s; overflow:hidden; }
+  .side.min { width:3.8vw; padding:1.4vw .7vw; }
+  .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; cursor:pointer; user-select:none; transition:font-size .2s; white-space:nowrap; }
+  .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.6vw; height:.6vw; border-radius:50%; background:var(--yl); transition:right .38s, top .38s; }
+  .side.min .brand { font-size:1.55vw; }
+  .side.min .brand::after { right:-.55vw; top:.25vw; width:.5vw; height:.5vw; }
   .nav { list-style:none; display:flex; flex-direction:column; gap:.3vw; margin-top:2.4vw; }
-  .nav li { display:flex; align-items:center; gap:.8vw; font-size:1.05vw; font-weight:500; padding:.65vw .8vw; border-radius:.7vw; cursor:pointer; transition:.2s; opacity:.62; }
+  .nav li { display:flex; align-items:center; gap:.8vw; font-size:1.05vw; font-weight:500; padding:.65vw .8vw; border-radius:.7vw; cursor:pointer; transition:.2s; opacity:.62; white-space:nowrap; }
   .nav li:hover { opacity:1; background:#ffffff10; }
   .nav li.cur { opacity:1; background:var(--pk); color:#fff; font-weight:700; box-shadow:.25vw .25vw 0 var(--yl); }
   .nav li.cur .ic { background:#fff !important; }
   .nav li.off { opacity:.3; cursor:default; } .nav li.off:hover { background:none; }
+  .side.min .nav li { padding:.65vw; justify-content:center; gap:0; }
+  .side.min .nav li.cur { box-shadow:.2vw .2vw 0 var(--yl); }
   .ic { width:1.1vw; height:1.1vw; flex:none; }
   .ic.c{border-radius:50%} .ic.s{border-radius:.2vw} .ic.t{clip-path:polygon(50% 0,100% 100%,0 100%)} .ic.h{border-radius:50% 50% 0 0} .ic.d{transform:rotate(45deg) scale(.8);border-radius:.15vw} .ic.p{border-radius:50% 50% 50% 0}
-  .ct { margin-left:auto; font-family:'DM Mono'; font-size:.6vw; padding:.05vw .4vw; border-radius:99px; background:var(--pk); color:#fff; }
+  .side.min .ic { width:1.25vw; height:1.25vw; }
+  .ct { margin-left:auto; font-family:'DM Mono'; font-size:.6vw; padding:.05vw .4vw; border-radius:99px; background:var(--pk); color:#fff; transition:opacity .2s; }
   .nav li.cur .ct { background:var(--ink); }
+  .side.min .ct { opacity:0; width:0; padding:0; overflow:hidden; }
   .soon { }
   .side > * { flex-shrink:0; }
-  .sbinfo { margin:auto 0; display:flex; flex-direction:column; gap:2vw; padding:2.2vw .8vw 1.8vw; position:relative; }
+  /* elementos que se ocultan en modo colapsado */
+  .side.min .sbinfo,
+  .side.min .askbtn,
+  .side.min .who,
+  .side.min .nav li span:not(.ic):not(.ct) { opacity:0; pointer-events:none; transition:opacity .15s; }
+  .side.min .nav li span:not(.ic) { width:0; overflow:hidden; }
+  .sbinfo { margin:auto 0; display:flex; flex-direction:column; gap:2vw; padding:2.2vw .8vw 1.8vw; position:relative; transition:opacity .2s; }
   .sbinfo::before { content:''; position:absolute; left:.8vw; right:.8vw; top:.9vw; height:1px; background:#ffffff14; }
   .sbg .sect { margin-bottom:.7vw; }
   .sbped b { display:block; font-size:.95vw; font-weight:600; }
@@ -421,7 +434,7 @@
 <div class="stagewrap"><div class="stage" id="app">
   <div class="grain"></div><div class="ht"></div>
   <aside class="side">
-    <div class="brand">mise</div>
+    <div class="brand" id="sideToggle"><span id="brandText">mise</span></div>
     <ul class="nav">
       <li data-v="panorama" class="cur"><span class="ic c" style="background:var(--pk)"></span>Panorama</li>
       <li data-v="despensa"><span class="ic s" style="background:var(--or)"></span>Despensa<span class="ct" id="ctLow">3</span></li>
@@ -1068,6 +1081,13 @@ document.getElementById('askOpen').onclick=()=>{ document.getElementById('mise')
 document.getElementById('mClose').onclick=closeMise;
 document.getElementById('mForm').onsubmit=e=>{ e.preventDefault(); ask(document.getElementById('mIn').value); };
 addEventListener('keydown',e=>{ if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); document.getElementById('mise').classList.contains('on')?closeMise():openMise(); } if(e.key==='Escape') closeMise(); });
+/* ================== SIDEBAR TOGGLE ================== */
+document.getElementById('sideToggle').onclick=()=>{
+  const side=document.querySelector('.side');
+  const min=side.classList.toggle('min');
+  document.getElementById('brandText').textContent=min?'m':'mise';
+};
+
 function renderAll(){ renderSide(); renderDespensa(); renderPlanes(); renderPronostico(); renderProveedores(); renderRecetas(); renderPanorama(); }
 renderAll(); pzPlay();
 </script>
