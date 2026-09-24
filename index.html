@@ -28,7 +28,7 @@
   .side { position:relative; z-index:6; width:16.5%; padding:2vw 1.2vw 1.2vw; background:var(--ink); color:var(--paper); border-radius:0 1.6vw 1.6vw 0; display:flex; flex-direction:column; flex:none; }
   .brand { font-family:'Bricolage Grotesque'; font-weight:800; font-size:2vw; letter-spacing:-.05em; line-height:1; position:relative; display:inline-block; }
   .brand::after { content:''; position:absolute; right:-.7vw; top:.3vw; width:.6vw; height:.6vw; border-radius:50%; background:var(--yl); }
-  .nav { list-style:none; display:flex; flex-direction:column; gap:.35vw; margin-top:auto; }
+  .nav { list-style:none; display:flex; flex-direction:column; gap:.4vw; margin-top:2.4vw; }
   .nav li { display:flex; align-items:center; gap:.8vw; font-size:1.05vw; font-weight:500; padding:.65vw .8vw; border-radius:.7vw; cursor:pointer; transition:.2s; opacity:.62; }
   .nav li:hover { opacity:1; background:#ffffff10; }
   .nav li.cur { opacity:1; background:var(--pk); color:#fff; font-weight:700; box-shadow:.25vw .25vw 0 var(--yl); }
@@ -38,13 +38,27 @@
   .ic.c{border-radius:50%} .ic.s{border-radius:.2vw} .ic.t{clip-path:polygon(50% 0,100% 100%,0 100%)} .ic.h{border-radius:50% 50% 0 0} .ic.d{transform:rotate(45deg) scale(.8);border-radius:.15vw} .ic.p{border-radius:50% 50% 50% 0}
   .ct { margin-left:auto; font-family:'DM Mono'; font-size:.6vw; padding:.05vw .4vw; border-radius:99px; background:var(--pk); color:#fff; }
   .nav li.cur .ct { background:var(--ink); }
-  .soon { margin-top:1.8vw; margin-bottom:auto; padding:.9vw; border-radius:1vw; background:#ffffff0d; }
+  .soon { margin-top:.8vw; padding:.9vw; border-radius:1vw; background:#ffffff0d; }
+  .side > * { flex-shrink:0; }
+  .sbhr { height:1px; background:#ffffff1a; margin:1.2vw .2vw 1vw; }
+  .sbped { padding:.9vw; border-radius:1vw; background:var(--pk); color:#fff; position:relative; overflow:hidden; cursor:pointer; transition:transform .2s; }
+  .sbped:hover { transform:translateY(-2px); }
+  .sbped::after { content:''; position:absolute; right:-1.6vw; top:-1.6vw; width:4.6vw; height:4.6vw; border-radius:50%; background:var(--yl); opacity:.35; mix-blend-mode:screen; }
+  .sbped .sect { opacity:.85; margin-bottom:.35vw; }
+  .sbped b { display:block; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.15vw; letter-spacing:-.03em; line-height:1.1; position:relative; z-index:1; }
+  .sbped small { display:block; font-family:'DM Mono'; font-size:.6vw; opacity:.9; margin-top:.25vw; position:relative; z-index:1; }
+  .sbped .go { display:inline-block; margin-top:.6vw; font-weight:700; font-size:.72vw; background:var(--ink); color:#fff; padding:.35vw .75vw; border-radius:99px; position:relative; z-index:1; }
+  .sbped.ok { background:#ffffff0d; color:var(--paper); } .sbped.ok::after { display:none; } .sbped.ok b { color:#6ee7b7; }
+  .sbmet { display:grid; grid-template-columns:repeat(3,1fr); gap:.4vw; margin-top:.8vw; }
+  .sbmet div { padding:.55vw .5vw; text-align:center; border-radius:.8vw; background:#ffffff0d; }
+  .sbmet small { display:block; font-family:'DM Mono'; font-size:.5vw; opacity:.6; line-height:1.3; }
+  .sbmet b { display:block; font-family:'Bricolage Grotesque'; font-weight:800; font-size:1vw; letter-spacing:-.03em; margin-top:.15vw; }
   .sect { font-family:'DM Mono'; font-size:.58vw; letter-spacing:.14em; text-transform:uppercase; opacity:.55; margin-bottom:.6vw; }
   .soon .it { display:flex; align-items:center; gap:.5vw; font-size:.74vw; margin-bottom:.45vw; }
   .soon .it .nm { width:4.4vw; } .soon .track { flex:1; height:.4vw; border-radius:99px; background:#ffffff1c; overflow:hidden; }
   .soon .track i { display:block; height:100%; border-radius:99px; background:var(--pk); transition:width .6s; }
   .soon .it .dd { font-family:'DM Mono'; font-size:.6vw; width:2.4vw; text-align:right; }
-  .grow { display:none; }
+  .grow { flex:1; min-height:1vw; }
   .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.82vw; font-weight:600; padding:.7vw .9vw; border-radius:99px; background:var(--yl); color:var(--ink); margin:.8vw 0; }
   .orb { width:1.05vw; height:1.05vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 4s linear infinite; flex:none; }
   @keyframes spin { to { transform:rotate(360deg);} }
@@ -392,7 +406,10 @@
       <li data-v="proveedores"><span class="ic d" style="background:var(--pk)"></span>Proveedores</li>
       <li data-v="recetas"><span class="ic p" style="background:var(--bl)"></span>Recetas</li>
     </ul>
+    <div class="sbhr"></div>
+    <div class="sbped" id="sbPed"></div>
     <div class="soon"><div class="sect">● Se acaba pronto</div><div id="soonList"></div></div>
+    <div class="sbmet" id="sbMet"></div>
     <div class="grow"></div>
     <div class="askbtn" id="askOpen"><span class="orb"></span>Pregúntale a mise<kbd>⌘K</kbd></div>
     <div class="who"><span class="av">LO</span><div><b>La Olla de Nico</b><span>Chapinero · 64 platos/día</span></div></div>
@@ -592,6 +609,18 @@ function renderSide(){
   const low=[...I].sort((a,b)=>cov(a)-cov(b)).slice(0,3);
   document.getElementById('soonList').innerHTML=low.map(x=>`<div class="it"><span class="nm">${x.n}</span><span class="track"><i style="width:${Math.min(100,cov(x)/10*100)}%"></i></span><span class="dd">${r1(cov(x))} d</span></div>`).join('');
   const nLow=I.filter(x=>cov(x)<2.5).length; document.getElementById('ctLow').textContent=nLow;
+  const vis=planes.filter(p=>p.estado!=='descartado'), pend=vis.filter(p=>p.dia===0&&p.estado!=='confirmado');
+  const tot=ps=>ps.reduce((s,p)=>s+p.items.reduce((a,it)=>a+it.q*byId[it.id].precio,0),0);
+  const ped=document.getElementById('sbPed');
+  ped.className='sbped'+(pend.length?'':' ok');
+  ped.innerHTML=pend.length?`<div class="sect">● Pedir hoy</div><b>${pend.map(p=>PROV[p.prov].n.split(' ')[0]).join(' + ')}</b><small>${pend.reduce((s,p)=>s+p.items.length,0)} insumos · ${money(tot(pend))}</small><span class="go">Pedir ahora →</span>`
+    :`<div class="sect">● Pedir hoy</div><b>Todo pedido ✓</b><small>${vis.filter(p=>p.dia>0&&p.estado!=='confirmado').length} comandas para los próximos días</small>`;
+  ped.onclick=()=>{ if(pend.length){ selP=planes.indexOf(pend[0]); } document.querySelector('.nav li[data-v="planes"]').click(); };
+  const conf=id=>planes.filter(p=>p.estado==='confirmado').reduce((s,p)=>s+p.items.filter(it=>it.id===id).reduce((a,it)=>a+it.q,0),0);
+  const salud=Math.round(I.filter(x=>cov(x)+conf(x.id)/x.cons>=7).length/I.length*100);
+  const wk=Array.from({length:7},(_,d)=>platos(d)).reduce((a,b)=>a+b,0);
+  const dPct=Math.round((tot(vis)/1900000-1)*100);
+  document.getElementById('sbMet').innerHTML=`<div><small>platos semana</small><b>${wk}</b></div><div><small>compras vs pasada</small><b style="color:${dPct<=0?'#6ee7b7':'#ff8fcf'}">${dPct>0?'+':'−'}${Math.abs(dPct)}%</b></div><div><small>despensa cubierta</small><b style="color:${salud>=75?'#6ee7b7':salud>=50?'var(--yl)':'#ff8fcf'}">${salud}%</b></div>`;
 }
 
 /* ================== DESPENSA ================== */
