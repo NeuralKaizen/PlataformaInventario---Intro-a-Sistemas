@@ -49,12 +49,13 @@
   .side > * { flex-shrink:0; }
   /* elementos que se ocultan en modo colapsado */
   .side.min .sbinfo,
-  .side.min .askbtn,
-  .side.min .who,
-  .side.min .nav li span:not(.ic):not(.ct) { opacity:0; pointer-events:none; transition:opacity .15s; }
-  .side.min .nav li span:not(.ic) { width:0; overflow:hidden; }
-  .sbinfo { margin:auto 0; display:flex; flex-direction:column; gap:2vw; padding:2.2vw .8vw 1.8vw; position:relative; transition:opacity .2s; }
-  .sbinfo::before { content:''; position:absolute; left:.8vw; right:.8vw; top:.9vw; height:1px; background:#ffffff14; }
+  .side.min .who { opacity:0; pointer-events:none; max-height:0; overflow:hidden; margin:0; padding:0; transition:opacity .2s, max-height .3s; }
+  .navlbl { overflow:hidden; white-space:nowrap; transition:max-width .35s cubic-bezier(.4,0,.2,1), opacity .25s; max-width:20vw; opacity:1; }
+  .side.min .navlbl { max-width:0; opacity:0; }
+  /* askbtn colapsado: solo el orb, centrado como botón circular */
+  .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.82vw; font-weight:600; padding:.7vw .9vw; border-radius:99px; background:var(--yl); color:var(--ink); margin:.8vw 0; transition:padding .35s, border-radius .35s, background .2s, box-shadow .2s; }
+  .side.min .askbtn { padding:.65vw; justify-content:center; border-radius:50%; margin:.8vw auto; }
+  .sbinfo { margin:auto 0; display:flex; flex-direction:column; gap:2vw; padding:2.2vw .8vw 1.8vw; position:relative; transition:opacity .2s, max-height .3s; }  .sbinfo::before { content:''; position:absolute; left:.8vw; right:.8vw; top:.9vw; height:1px; background:#ffffff14; }
   .sbg .sect { margin-bottom:.7vw; }
   .sbped b { display:block; font-size:.95vw; font-weight:600; }
   .sbped small { display:block; font-family:'DM Mono'; font-size:.62vw; opacity:.55; margin-top:.25vw; }
@@ -71,7 +72,6 @@
   .soon .track i { display:block; height:100%; border-radius:99px; background:var(--pk); transition:width .6s; }
   .soon .it .dd { font-family:'DM Mono'; font-size:.6vw; width:2.4vw; text-align:right; }
   .grow { flex:1; min-height:1vw; }
-  .askbtn { display:flex; align-items:center; gap:.6vw; font-size:.82vw; font-weight:600; padding:.7vw .9vw; border-radius:99px; background:var(--yl); color:var(--ink); margin:.8vw 0; }
   .orb { width:1.05vw; height:1.05vw; border-radius:50%; background:conic-gradient(var(--pk),var(--yl),var(--bl),var(--pk)); animation:spin 4s linear infinite; flex:none; }
   @keyframes spin { to { transform:rotate(360deg);} }
   .who { display:flex; align-items:center; gap:.6vw; font-size:.68vw; line-height:1.3; }
@@ -436,19 +436,19 @@
   <aside class="side">
     <div class="brand" id="sideToggle"><span id="brandText">mise</span></div>
     <ul class="nav">
-      <li data-v="panorama" class="cur"><span class="ic c" style="background:var(--pk)"></span>Panorama</li>
-      <li data-v="despensa"><span class="ic s" style="background:var(--or)"></span>Despensa<span class="ct" id="ctLow">3</span></li>
-      <li data-v="planes"><span class="ic t" style="background:var(--yl)"></span>Planes de compra</li>
-      <li data-v="pronostico"><span class="ic h" style="background:var(--bl)"></span>Pronóstico</li>
-      <li data-v="proveedores"><span class="ic d" style="background:var(--pk)"></span>Proveedores</li>
-      <li data-v="recetas"><span class="ic p" style="background:var(--bl)"></span>Recetas</li>
+      <li data-v="panorama" class="cur"><span class="ic c" style="background:var(--pk)"></span><span class="navlbl">Panorama</span></li>
+      <li data-v="despensa"><span class="ic s" style="background:var(--or)"></span><span class="navlbl">Despensa</span><span class="ct" id="ctLow">3</span></li>
+      <li data-v="planes"><span class="ic t" style="background:var(--yl)"></span><span class="navlbl">Planes de compra</span></li>
+      <li data-v="pronostico"><span class="ic h" style="background:var(--bl)"></span><span class="navlbl">Pronóstico</span></li>
+      <li data-v="proveedores"><span class="ic d" style="background:var(--pk)"></span><span class="navlbl">Proveedores</span></li>
+      <li data-v="recetas"><span class="ic p" style="background:var(--bl)"></span><span class="navlbl">Recetas</span></li>
     </ul>
     <div class="sbinfo">
       <div class="sbg sbped" id="sbPed"></div>
       <div class="sbg soon"><div class="sect">Se acaba pronto</div><div id="soonList"></div></div>
       <div class="sbg"><div class="sect">Esta semana</div><div id="sbMet"></div></div>
     </div>
-    <div class="askbtn" id="askOpen"><span class="orb"></span>Pregúntale a mise<kbd>⌘K</kbd></div>
+    <div class="askbtn" id="askOpen"><span class="orb"></span><span class="navlbl">Pregúntale a mise<kbd>⌘K</kbd></span></div>
     <div class="who"><span class="av">LO</span><div><b>La Olla de Nico</b><span>Chapinero · 64 platos/día</span></div></div>
   </aside>
 
