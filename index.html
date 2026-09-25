@@ -145,6 +145,39 @@
   .btn.pk { background:var(--pk); border-color:var(--pk); color:#fff; }
   .btn.pk:hover { box-shadow:0 .2vw 0 var(--ink); }
 
+  /* ---- LOTES (sección dentro del panel de detalle de despensa) ---- */
+  .lotes-sec { display:flex; flex-direction:column; gap:.5vw; }
+  .lotes-sec .sect { opacity:.6; }
+  .lote-row { background:var(--paper); border-radius:.7vw; padding:.55vw .7vw; display:flex; flex-direction:column; gap:.35vw; position:relative; }
+  .lote-row.vencido { border:1.5px solid var(--pk); background:#c4366e0e; }
+  .lote-row.pronto  { border:1.5px solid var(--or); background:#f5a6230e; }
+  .lote-row.ok      { border:1.5px solid #1d1a2b22; }
+  .lote-top { display:flex; justify-content:space-between; align-items:center; gap:.4vw; }
+  .lote-id  { font-family:'DM Mono'; font-size:.58vw; opacity:.55; }
+  .lote-qty { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.9vw; letter-spacing:-.03em; }
+  .lote-days { font-size:.66vw; font-weight:700; white-space:nowrap; }
+  .lote-days.ok   { color:var(--gr); }
+  .lote-days.warn { color:var(--or); }
+  .lote-days.bad  { color:var(--pk); }
+  .lote-bar-wrap { position:relative; height:.5vw; background:#1d1a2b18; border-radius:99px; overflow:hidden; }
+  .lote-bar { height:100%; border-radius:99px; transition:width .6s cubic-bezier(.3,1.2,.5,1); }
+  .lote-bar.ok   { background:var(--gr); }
+  .lote-bar.warn { background:var(--or); }
+  .lote-bar.bad  { background:var(--pk); }
+  .lote-meta { display:flex; justify-content:space-between; align-items:center; }
+  .lote-nota { font-family:'DM Mono'; font-size:.56vw; opacity:.5; }
+  .lote-edit-btn { font-family:'DM Mono'; font-size:.56vw; padding:.15vw .45vw; border-radius:99px; border:1.5px solid var(--ink); background:transparent; cursor:pointer; opacity:.7; transition:.15s; white-space:nowrap; }
+  .lote-edit-btn:hover { opacity:1; background:var(--yl); border-color:var(--yl); }
+  .lote-edit-row { display:flex; align-items:center; gap:.5vw; margin-top:.1vw; }
+  .lote-edit-row label { font-family:'DM Mono'; font-size:.6vw; opacity:.7; white-space:nowrap; }
+  .lote-edit-row .step { flex:none; }
+  .lote-edit-row input { width:2.6vw; }
+  .lote-save-btn { font-family:'Instrument Sans'; font-weight:700; font-size:.62vw; padding:.3vw .7vw; border-radius:99px; border:2px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; transition:.15s; }
+  .lote-save-btn:hover { transform:translateY(-1px); box-shadow:0 .15vw 0 var(--pk); }
+  .lote-cancel-btn { font-family:'Instrument Sans'; font-weight:700; font-size:.62vw; padding:.3vw .7vw; border-radius:99px; border:2px solid var(--ink); background:transparent; cursor:pointer; transition:.15s; }
+  .lote-cancel-btn:hover { background:var(--paper); }
+  .lote-ingreso { font-family:'DM Mono'; font-size:.56vw; opacity:.5; }
+
   /* ======== PLANES ======== */
   .pbody { flex:1; display:flex; gap:2vw; margin-top:1.3vw; min-height:0; }
   .board { flex:1; display:flex; flex-direction:column; min-width:0; }
@@ -277,6 +310,53 @@
   .impact2 .btn { width:100%; margin-top:.6vw; }
   .acc { display:flex; align-items:center; gap:.8vw; font-size:.72vw; line-height:1.4; }
   .ring { width:3.2vw; height:3.2vw; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-family:'Bricolage Grotesque'; font-weight:800; font-size:.85vw; }
+
+  /* ---- panel de día (slide-in sobre el chart) ---- */
+  .fday-panel { position:absolute; top:0; bottom:0; right:0; width:17vw; background:var(--ink); color:var(--paper); border-radius:0 1.1vw 1.1vw 0; box-shadow:-.5vw 0 0 var(--pk); display:flex; flex-direction:column; gap:.7vw; padding:1.1vw 1vw 1vw; z-index:10; transform:translateX(110%); transition:transform .38s cubic-bezier(.4,0,.2,1); overflow:hidden; }
+  .fday-panel.open { transform:translateX(0); }
+  .fday-panel .fdp-close { position:absolute; top:.7vw; left:.7vw; width:2.2vw; height:2.2vw; border-radius:50%; background:#ffffff18; border:1.5px solid #ffffff30; color:var(--paper); font-size:1vw; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.15s; flex-shrink:0; }
+  .fday-panel .fdp-close:hover { background:var(--pk); border-color:var(--pk); }
+  .fday-panel .fdp-kick { font-family:'DM Mono'; font-size:.58vw; letter-spacing:.12em; text-transform:uppercase; opacity:.55; margin-top:1.8vw; }
+  .fday-panel .fdp-title { font-family:'Bricolage Grotesque'; font-weight:800; font-size:1.55vw; letter-spacing:-.04em; line-height:1; }
+  .fday-panel .fdp-total { font-family:'Bricolage Grotesque'; font-weight:800; font-size:3vw; letter-spacing:-.05em; line-height:1; }
+  .fday-panel .fdp-sub { font-family:'DM Mono'; font-size:.6vw; opacity:.6; margin-top:.15vw; }
+  .fday-panel .fdp-divider { height:1px; background:#ffffff14; margin:.1vw 0; }
+  .fday-panel .fdp-label { font-family:'DM Mono'; font-size:.56vw; letter-spacing:.1em; text-transform:uppercase; opacity:.5; margin-bottom:.2vw; }
+  /* Las barras se comprimen cuando el panel está abierto */
+  .chart.panel-open .barsB { right:18.4vw; transition:right .38s cubic-bezier(.4,0,.2,1); }
+  .chart.panel-open .daysB { right:18.4vw; transition:right .38s cubic-bezier(.4,0,.2,1); }
+  .barsB { transition:right .38s cubic-bezier(.4,0,.2,1); }
+  .daysB { transition:right .38s cubic-bezier(.4,0,.2,1); }
+  .fday-row { display:flex; flex-direction:column; gap:.3vw; }
+  .fday-row-top { display:flex; justify-content:space-between; align-items:baseline; }
+  .fday-row-top .fdname { font-size:.72vw; font-weight:600; }
+  .fday-row-top .fdqty { font-family:'Bricolage Grotesque'; font-weight:800; font-size:.95vw; letter-spacing:-.03em; }
+  .fday-row-top .fdpct { font-family:'DM Mono'; font-size:.56vw; opacity:.55; }
+  .fday-bar-wrap { height:.38vw; background:#ffffff14; border-radius:99px; overflow:hidden; }
+  .fday-bar { height:100%; border-radius:99px; transition:width .55s cubic-bezier(.3,1.3,.5,1); }
+  .fday-ev { background:#ffffff10; border-radius:.55vw; padding:.45vw .6vw; font-size:.64vw; line-height:1.4; margin-top:.1vw; }
+  .fday-ev b { font-weight:700; }
+  /* riesgo de vencimiento dentro del panel */
+  .frisk-sec { display:flex; flex-direction:column; gap:.45vw; }
+  .frisk-head { display:flex; align-items:center; gap:.4vw; font-family:'DM Mono'; font-size:.56vw; letter-spacing:.1em; text-transform:uppercase; }
+  .frisk-head .frisk-dot { width:.55vw; height:.55vw; border-radius:50%; background:var(--or); flex:none; }
+  .frisk-item { background:#f5a62318; border:1px solid #f5a62355; border-radius:.55vw; padding:.5vw .6vw; display:flex; flex-direction:column; gap:.3vw; }
+  .frisk-item.bad { background:#c4366e18; border-color:#c4366e55; }
+  .frisk-item-top { display:flex; justify-content:space-between; align-items:baseline; }
+  .frisk-item-name { font-size:.7vw; font-weight:700; }
+  .frisk-item-qty { font-family:'DM Mono'; font-size:.62vw; color:var(--or); font-weight:600; }
+  .frisk-item.bad .frisk-item-qty { color:var(--pk); }
+  .frisk-item-detail { font-family:'DM Mono'; font-size:.56vw; opacity:.65; line-height:1.4; }
+  .frisk-recetas { display:flex; flex-wrap:wrap; gap:.3vw; margin-top:.15vw; }
+  .frisk-tag { font-size:.58vw; padding:.12vw .4vw; border-radius:99px; background:#f5a62333; border:1px solid #f5a62377; font-weight:600; white-space:nowrap; color:var(--or); }
+  .frisk-tag.bad { background:#c4366e22; border-color:#c4366e66; color:var(--pk); }
+  .fday-row.risky .fdname::after { content:' ⚠'; font-size:.6vw; color:var(--or); }
+  .fday-row.muy-risky .fdname::after { content:' ⚠⚠'; font-size:.6vw; color:var(--pk); }
+  .bcol { cursor:pointer; }
+  .bcol:hover .bbase, .bcol:hover .bup, .bcol:hover .bmn { filter:brightness(1.18); }
+  .bcol:hover .bn { color:var(--pk); }
+  .bcol.sel .bbase { box-shadow:inset 0 0 0 2px var(--pk) !important; }
+  .bcol.sel .bn { color:var(--pk); font-size:1.05vw; }
 
   /* ======== PROVEEDORES ======== */
   .vbody { flex:1; display:flex; gap:2vw; margin-top:1.3vw; min-height:0; }
@@ -511,7 +591,7 @@
       </div>
       <div class="fbody">
         <div class="fleft">
-          <div class="chart" id="chart"></div>
+          <div class="chart" id="chart"><div class="fday-panel" id="fdayPanel"><button class="fdp-close" id="fdayClose">✕</button></div></div>
           <div class="fstrip" id="fstrip"></div>
         </div>
         <div class="fright">
@@ -572,6 +652,55 @@ const I=[ // id, nombre, cat, unidad, stock, consumo/día, prov, precio
 ].map(a=>({id:a[0],n:a[1],cat:a[2],u:a[3],stock:a[4],cons:a[5],prov:a[6],precio:a[7],hist:Array.from({length:14},(_,k)=>a[5]*(.75+.5*Math.random()+(k%7>=4?.2:0)))}));
 const USOS={tom:['Hogao · 60 g','Bandeja paisa','Patacón con hogao','Ensalada'],ceb:['Hogao · 40 g','Ajiaco','Arroz con pollo'],cil:['Ajiaco · 5 g','Patacón','Caldo'],pla:['Patacón · 180 g','Bandeja paisa · 120 g'],pec:['Pechuga gratinada · 220 g','Ajiaco · 90 g','Arroz con pollo · 110 g'],agu:['Bandeja paisa · ½ und','Ajiaco · ¼ und'],pap:['Ajiaco · 250 g','Papas criollas'],arr:['Bandeja paisa · 150 g','Arroz con pollo · 180 g'],fri:['Bandeja paisa · 120 g'],hue:['Bandeja paisa · 1 und','Desayunos · 2 und'],res:['Bandeja paisa · 110 g'],cer:['Bandeja paisa · 80 g'],que:['Arepa con queso · 40 g','Pechuga gratinada · 50 g'],mai:['Arepa · 70 g']};
 const byId=Object.fromEntries(I.map(x=>[x.id,x]));
+
+/* ---- lotes por insumo (batches) ----
+   Campos: id, qty, ingresado (días atrás), vidaUtil (días totales), notas
+   diasRestantes = vidaUtil - ingresado  (calculado, no almacenado fijo)
+*/
+const LOTES={
+  tom:[ {id:'tom-1',qty:2.1,ingresado:3,vidaUtil:7, nota:'Lote Fruver'},
+        {id:'tom-2',qty:2.0,ingresado:1,vidaUtil:7, nota:'Lote Fruver'} ],
+  ceb:[ {id:'ceb-1',qty:3.0,ingresado:4,vidaUtil:21,nota:'Lote Fruver'},
+        {id:'ceb-2',qty:2.0,ingresado:1,vidaUtil:21,nota:'Lote Fruver'} ],
+  cil:[ {id:'cil-1',qty:0.3,ingresado:1,vidaUtil:1, nota:'Lote Fruver'} ],  // ⚠ vence hoy → riesgo severo (rojo)
+  agu:[ {id:'agu-1',qty:12, ingresado:2,vidaUtil:6, nota:'Plaza 7 ago'},
+        {id:'agu-2',qty:10, ingresado:0,vidaUtil:6, nota:'Plaza 7 ago'} ],
+  lim:[ {id:'lim-1',qty:3.5,ingresado:3,vidaUtil:14,nota:'Plaza 7 ago'},
+        {id:'lim-2',qty:2.5,ingresado:0,vidaUtil:14,nota:'Plaza 7 ago'} ],
+  pla:[ {id:'pla-1',qty:1.2,ingresado:2,vidaUtil:5, nota:'Plaza 7 ago'},
+        {id:'pla-2',qty:2.0,ingresado:0,vidaUtil:5, nota:'Plaza 7 ago'} ],
+  yuc:[ {id:'yuc-1',qty:5.0,ingresado:5,vidaUtil:14,nota:'Plaza 7 ago'},
+        {id:'yuc-2',qty:3.0,ingresado:1,vidaUtil:14,nota:'Plaza 7 ago'} ],
+  pap:[ {id:'pap-1',qty:20, ingresado:6,vidaUtil:21,nota:'Plaza 7 ago'},
+        {id:'pap-2',qty:10, ingresado:3,vidaUtil:21,nota:'Plaza 7 ago'},
+        {id:'pap-3',qty:8,  ingresado:0,vidaUtil:21,nota:'Plaza 7 ago'} ],
+  pec:[ {id:'pec-1',qty:5.0,ingresado:2,vidaUtil:4, nota:'Carnes JR'},
+        {id:'pec-2',qty:6.0,ingresado:0,vidaUtil:4, nota:'Carnes JR'} ],
+  res:[ {id:'res-1',qty:3.0,ingresado:3,vidaUtil:4, nota:'Carnes JR'},
+        {id:'res-2',qty:3.0,ingresado:1,vidaUtil:4, nota:'Carnes JR'} ],
+  cer:[ {id:'cer-1',qty:2.5,ingresado:2,vidaUtil:5, nota:'Carnes JR'},
+        {id:'cer-2',qty:2.5,ingresado:0,vidaUtil:5, nota:'Carnes JR'} ],
+  hue:[ {id:'hue-1',qty:60, ingresado:3,vidaUtil:21,nota:'Lácteos Sol'},
+        {id:'hue-2',qty:30, ingresado:0,vidaUtil:21,nota:'Lácteos Sol'} ],
+  que:[ {id:'que-1',qty:2.0,ingresado:4,vidaUtil:14,nota:'Lácteos Sol'},
+        {id:'que-2',qty:2.0,ingresado:1,vidaUtil:14,nota:'Lácteos Sol'} ],
+  cre:[ {id:'cre-1',qty:1.1,ingresado:1,vidaUtil:2, nota:'Lácteos Sol'},   // ⚠ vence mañana → riesgo moderado (naranja)
+        {id:'cre-2',qty:1.9,ingresado:0,vidaUtil:7, nota:'Lácteos Sol'} ],
+  arr:[ {id:'arr-1',qty:30, ingresado:7,vidaUtil:365,nota:'La 14'},
+        {id:'arr-2',qty:22, ingresado:2,vidaUtil:365,nota:'La 14'} ],
+  fri:[ {id:'fri-1',qty:12, ingresado:8,vidaUtil:365,nota:'La 14'},
+        {id:'fri-2',qty:8,  ingresado:1,vidaUtil:365,nota:'La 14'} ],
+  mai:[ {id:'mai-1',qty:8,  ingresado:5,vidaUtil:180,nota:'La 14'},
+        {id:'mai-2',qty:6,  ingresado:0,vidaUtil:180,nota:'La 14'} ],
+  ace:[ {id:'ace-1',qty:10, ingresado:10,vidaUtil:365,nota:'La 14'},
+        {id:'ace-2',qty:8,  ingresado:2, vidaUtil:365,nota:'La 14'} ],
+  sal:[ {id:'sal-1',qty:5,  ingresado:12,vidaUtil:365,nota:'La 14'},
+        {id:'sal-2',qty:4,  ingresado:3, vidaUtil:365,nota:'La 14'} ],
+};
+/* helper: días restantes de un lote */
+const diasRest=l=>Math.max(0, l.vidaUtil - l.ingresado);
+/* helper: fracción de vida útil restante 0-1 */
+const fracVida=l=>l.vidaUtil>0 ? Math.min(1, diasRest(l)/l.vidaUtil) : 0;
 
 /* ---- recetas (fichas técnicas): cantidades en g/ml, o und ---- */
 const RECETAS=[
@@ -710,6 +839,33 @@ function renderDetail(editMode){
       </div>`
     : `<div class="kpis"><div class="kpi"><small>en bodega</small><b>${r1(x.stock)} ${x.u}</b></div><div class="kpi"><small>consumo/día</small><b>${r1(x.cons)} ${x.u}</b></div><div class="kpi"><small>alcanza</small><b style="color:${cov(x)<2.5?'var(--pk)':'inherit'}">${r1(cov(x))} d</b></div></div>`;
 
+  // — sección de lotes —
+  const lotes = LOTES[x.id] || [];
+  const lotesH = lotes.length ? (()=>{
+    const filas = lotes.map(l=>{
+      const dr = diasRest(l);
+      const fv = fracVida(l);
+      const estado = dr<=0 ? 'vencido' : dr<=3 ? 'pronto' : 'ok';
+      const barCls = dr<=0 ? 'bad' : dr<=3 ? 'warn' : 'ok';
+      const daysCls = barCls;
+      const daysLbl = dr<=0 ? 'vencido' : dr===1 ? '1 día' : `${dr} días`;
+      const pct = Math.round(fv*100);
+      return `<div class="lote-row ${estado}" data-lid="${l.id}">
+        <div class="lote-top">
+          <span class="lote-id">${l.id}</span>
+          <span class="lote-qty">${l.qty} ${x.u}</span>
+          <span class="lote-days ${daysCls}">${daysLbl}</span>
+        </div>
+        <div class="lote-bar-wrap"><div class="lote-bar ${barCls}" style="width:${pct}%"></div></div>
+        <div class="lote-meta">
+          <span class="lote-ingreso">ingresado hace ${l.ingresado===0?'hoy':l.ingresado+' d'} · vida útil ${l.vidaUtil} d</span>
+          <button class="lote-edit-btn" data-lid="${l.id}">✎ editar vida útil</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="lotes-sec"><div class="sect" style="opacity:.6">Lotes en bodega</div>${filas}</div>`;
+  })() : '';
+
   const btnsH = editMode
     ? `<div class="btns"><button class="btn" id="adjCancel">Cancelar</button><button class="btn pk" id="adjSave">Guardar cambio</button></div>`
     : `<div class="btns"><button class="btn" id="adjOpen">Ajustar stock</button><button class="btn" id="mermaOpen">Registrar merma</button>${p?`<button class="btn pri" id="goPlan">Ver pedido →</button>`:`<button class="btn pk">+ Crear pedido</button>`}</div>`;
@@ -717,6 +873,7 @@ function renderDetail(editMode){
   document.getElementById('detail').innerHTML=`
     <div><div class="kick" style="color:${c}">● ${CATS[x.cat].n}</div><h3>${x.n}</h3><div class="sub">${PROV[x.prov].n} · entrega en ${PROV[x.prov].lead} día${PROV[x.prov].lead>1?'s':''}</div></div>
     ${kpisH}
+    ${lotesH}
     <div><div class="sect" style="opacity:.6">Consumo últimos 14 días</div>
     <svg class="spark" viewBox="0 0 100 42" preserveAspectRatio="none"><polyline points="0,42 ${pts} 100,42" fill="${c}" fill-opacity=".25" stroke="none"/><polyline points="${pts}" fill="none" stroke="var(--ink)" stroke-width="1.2" vector-effect="non-scaling-stroke"/><line x1="0" x2="100" y1="${40-x.cons/mx*38}" y2="${40-x.cons/mx*38}" stroke="var(--pk)" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/></svg></div>
     ${nextH}
@@ -724,6 +881,45 @@ function renderDetail(editMode){
     ${btnsH}`;
 
   const g=document.getElementById('goPlan'); if(g) g.onclick=()=>{ selP=planes.indexOf(p); document.querySelector('.nav li[data-v="planes"]').click(); };
+
+  // — delegación de eventos para edición de vida útil por lote —
+  document.getElementById('detail').addEventListener('click', e=>{
+    const btn = e.target.closest('.lote-edit-btn');
+    if(!btn) return;
+    const lid = btn.dataset.lid;
+    const lotes2 = LOTES[x.id] || [];
+    const l = lotes2.find(l=>l.id===lid);
+    if(!l) return;
+    const row = btn.closest('.lote-row');
+    // Si ya hay un editor abierto en esta misma fila, no duplicar
+    if(row.querySelector('.lote-edit-row')) return;
+    // Ocultar el botón mientras se edita
+    btn.style.display='none';
+    // Insertar editor inline
+    const editEl = document.createElement('div');
+    editEl.className='lote-edit-row';
+    editEl.innerHTML=`
+      <label>Vida útil (días):</label>
+      <div class="step">
+        <button class="le-m">−</button>
+        <input class="le-inp" type="number" value="${l.vidaUtil}" min="1" step="1" style="width:2.6vw">
+        <button class="le-p">+</button>
+      </div>
+      <button class="lote-save-btn">Guardar</button>
+      <button class="lote-cancel-btn">✕</button>`;
+    row.appendChild(editEl);
+    const inp2 = editEl.querySelector('.le-inp');
+    editEl.querySelector('.le-m').onclick=()=>{ inp2.value=Math.max(1,parseInt(inp2.value||1)-1); };
+    editEl.querySelector('.le-p').onclick=()=>{ inp2.value=parseInt(inp2.value||1)+1; };
+    editEl.querySelector('.lote-cancel-btn').onclick=()=>{ editEl.remove(); btn.style.display=''; };
+    editEl.querySelector('.lote-save-btn').onclick=()=>{
+      const nv = Math.max(1, parseInt(inp2.value)||1);
+      const anterior = l.vidaUtil;
+      l.vidaUtil = nv;
+      toast(`Lote ${l.id}: vida útil ${anterior} d → <b>${nv} d</b> · quedan ${diasRest(l)} días`);
+      renderDetail(editMode);
+    };
+  });
 
   if(!editMode){
     document.getElementById('adjOpen').onclick=()=>renderDetail(true);
@@ -873,11 +1069,32 @@ function renderPronostico(){
   const band=`M${fut.map((v,i)=>`${X(i+14)},${Y(v*1.12)}`).join(' L')} L${fut.map((v,i)=>`${X(27-i)},${Y(fut[13-i]*.88)}`).join(' L')} Z`;
   const pastArea=line(PAST,0)+` L${X(13)},${H-bot} L${X(0)},${H-bot} Z`;
   const evOf=d=>EVENTOS.filter(e=>e.on&&e.d===d), bmx=Math.max(...fut,...base)*1.12;
+  // Guardamos el panel antes de reescribir innerHTML del chart
+  const savedPanel = document.getElementById('fdayPanel');
   el.innerHTML=`<div class="legB"><span><i style="background:var(--bl)"></i>día normal</span><span><i class="hx"></i>platos extra por un evento</span><span><i class="mn"></i>platos que se pierden</span></div>
   <div class="barsB">${fut.map((v,d)=>{ const b=base[d], ev=evOf(d), up=Math.max(0,v-b), dn=Math.max(0,b-v);
-    return `<div class="bcol ${d===0?'t':''}"><div class="bn">${v}</div>${ev.map(e=>`<div class="blbl" style="border-color:${e.m>0?'var(--ink)':'var(--bl)'}">${e.ic} ${e.m>0?'+':'−'}${Math.abs(Math.round(b*e.m))} platos<small>${e.sh}</small></div>`).join('')}
+    return `<div class="bcol ${d===0?'t':''} ${selDay===d?'sel':''}" data-d="${d}"><div class="bn">${v}</div>${ev.map(e=>`<div class="blbl" style="border-color:${e.m>0?'var(--ink)':'var(--bl)'}">${e.ic} ${e.m>0?'+':'−'}${Math.abs(Math.round(b*e.m))} platos<small>${e.sh}</small></div>`).join('')}
       ${dn?`<div class="bmn" style="height:${dn/bmx*100}%"></div>`:''}${up?`<div class="bup" style="height:${up/bmx*100}%"></div>`:''}<div class="bbase ${up?'cut':''}" style="height:${(b-dn)/bmx*100}%"></div></div>`; }).join('')}</div>
   <div class="daysB">${fut.map((_,d)=>`<span class="${d===0?'t':''}">${d===0?'<b>hoy</b>':WD[wdOf(d)]+' '+(24+d>30?24+d-30:24+d)}</span>`).join('')}</div>`;
+  // Reinsertar el panel deslizable (se pierde con innerHTML=)
+  if(savedPanel) el.appendChild(savedPanel);
+  else { const p=document.createElement('div'); p.className='fday-panel'; p.id='fdayPanel'; el.appendChild(p); }
+  // Reaplicar estado abierto si había un día seleccionado
+  if(selDay !== null){
+    openDayPanel(selDay);
+  } else {
+    el.classList.remove('panel-open');
+    document.getElementById('fdayPanel').innerHTML='<button class="fdp-close" id="fdayClose">✕</button>';
+    document.getElementById('fdayClose').onclick=closeDayPanel;
+  }
+  // Click handlers en columnas
+  el.querySelectorAll('.bcol').forEach(col=>{
+    col.onclick=()=>{
+      const d=parseInt(col.dataset.d);
+      if(selDay===d){ closeDayPanel(); }
+      else { openDayPanel(d); }
+    };
+  });
   // facs
   document.getElementById('facs').innerHTML=EVENTOS.map(e=>`<div class="fac" data-e="${e.id}"><span class="sw ${e.on?'on':''}"></span><span class="tx"><b>${e.n}</b><small>${WD[wdOf(e.d)]} ${24+e.d>30?24+e.d-30:24+e.d} ${e.d>6?'· semana siguiente':''}</small></span><span class="pct" style="color:${e.m>0?'var(--pk)':'var(--bl)'}">${e.m>0?'+':'−'}${Math.abs(Math.round(64*PAT[wdOf(e.d)]*e.m))} platos</span></div>`).join('');
   document.querySelectorAll('.fac').forEach(f=>f.onclick=()=>toggleEv(f.dataset.e));
@@ -897,6 +1114,146 @@ function renderPronostico(){
     <button class="btn pk" id="reSug">Ajustar planes de compra al pronóstico</button>`;
   document.getElementById('reSug').onclick=()=>{ const n=reSugerir(); renderAll(); toast(`${n} cantidades ajustadas en las comandas sugeridas · <a data-go="planes">ver planes</a>`); };
 }
+/* ---- panel de desglose de día en pronóstico ---- */
+let selDay = null;
+function openDayPanel(d){
+  const panel = document.getElementById('fdayPanel');
+  const totalDia = platos(d);
+  const f = factor();
+  const totalBase = RECETAS.reduce((s,r) => s + r.ventas * f, 0);
+
+  // Desglose por receta via regla de 3
+  const desglose = RECETAS.map(r => {
+    const ventaBase = r.ventas * f;
+    const esperados = Math.round(totalBase > 0 ? (ventaBase / totalBase) * totalDia : 0);
+    return { r, esperados, pct: totalDia > 0 ? Math.round((esperados / totalDia) * 100) : 0 };
+  }).sort((a,b) => b.esperados - a.esperados);
+
+  // ---- Análisis de riesgo de vencimiento ----
+  // Para cada insumo con lotes, calculamos cuánto stock vence en los próximos d+1 días
+  // y lo comparamos con el consumo acumulado proyectado hasta ese vencimiento.
+  // Si hay excedente → riesgo. Severidad: warn (naranja) si excedente < 30% del stock, bad (rojo) si >= 30%.
+  const riesgos = [];
+  I.forEach(x => {
+    const lotes2 = LOTES[x.id] || [];
+    lotes2.forEach(l => {
+      const dr = diasRest(l);
+      // Solo lotes que vencen dentro del horizonte del día seleccionado (inclusive hoy = d=0)
+      if(dr < 0 || dr > d) return;
+      // Consumo acumulado desde hoy hasta que vence el lote
+      const consumoAcum = x.cons * dr;
+      // Stock de este lote que podría no gastarse a tiempo
+      const excedente = Math.max(0, l.qty - consumoAcum);
+      if(excedente <= 0) return;
+      const pctExc = l.qty > 0 ? excedente / l.qty : 0;
+      const nivel = pctExc >= 0.3 ? 'bad' : 'warn';
+      // Recetas que usan este insumo
+      const recetasAfectadas = RECETAS.filter(r => r.ing[x.id] !== undefined);
+      riesgos.push({ x, l, dr, excedente, nivel, recetasAfectadas });
+    });
+  });
+
+  // Qué recetas tienen al menos un insumo en riesgo (para resaltarlas en el desglose)
+  const recetasEnRiesgo = new Set();
+  const recetasEnRiesgoMuy = new Set();
+  riesgos.forEach(rv => {
+    rv.recetasAfectadas.forEach(r => {
+      if(rv.nivel === 'bad') recetasEnRiesgoMuy.add(r.id);
+      else recetasEnRiesgo.add(r.id);
+    });
+  });
+
+  // Fecha legible
+  const fechaNum = 24 + d > 30 ? 24 + d - 30 : 24 + d;
+  const mes = 24 + d > 30 ? 'oct' : 'sep';
+  const diaSem = WD[wdOf(d)];
+  const esHoy = d === 0;
+  const evsDia = EVENTOS.filter(e => e.on && e.d === d);
+  const COLS = ['var(--pk)','var(--bl)','var(--gr)','var(--or)','var(--yl)','#a78bfa'];
+
+  // HTML de eventos del día
+  let evHtml = '';
+  if(evsDia.length){
+    const impacto = evsDia.reduce((s,e)=>s+Math.round(platos(d,Object.fromEntries(EVENTOS.map(x=>[x.id,false])))*e.m),0);
+    evHtml = `<div class="fday-ev">${evsDia.map(e=>`${e.ic} <b>${e.n}</b>`).join(' · ')}<br><span style="opacity:.7">${impacto>0?'+':''}${impacto} platos vs día normal</span></div>`;
+  }
+
+  // HTML de riesgos de vencimiento
+  let riesgoHtml = '';
+  if(riesgos.length){
+    const items = riesgos.map(rv => {
+      const tags = rv.recetasAfectadas.map(r =>
+        `<span class="frisk-tag ${rv.nivel==='bad'?'bad':''}">${r.n}</span>`
+      ).join('');
+      const drTexto = rv.dr === 0 ? 'hoy' : `en ${rv.dr} d`;
+      return `<div class="frisk-item ${rv.nivel}">
+        <div class="frisk-item-top">
+          <span class="frisk-item-name">${rv.x.n}</span>
+          <span class="frisk-item-qty">~${Math.round(rv.excedente*10)/10} ${rv.x.u} en riesgo</span>
+        </div>
+        <div class="frisk-item-detail">Lote ${rv.l.id} · vence ${drTexto} · quedan ${Math.round(rv.l.qty*10)/10} ${rv.x.u}</div>
+        ${rv.recetasAfectadas.length ? `<div class="frisk-recetas">${tags}</div>` : ''}
+      </div>`;
+    }).join('');
+    const dotColor = riesgos.some(r=>r.nivel==='bad') ? 'var(--pk)' : 'var(--or)';
+    riesgoHtml = `<div class="frisk-sec">
+      <div class="frisk-head"><span class="frisk-dot" style="background:${dotColor}"></span>Insumos en riesgo de vencimiento</div>
+      ${items}
+    </div>`;
+  }
+
+  // HTML de desglose de platos (con badges de riesgo)
+  const filasHtml = desglose.map((item,i) => {
+    const ancho = desglose[0].esperados > 0 ? Math.round((item.esperados / desglose[0].esperados) * 100) : 0;
+    const esMuyRisky = recetasEnRiesgoMuy.has(item.r.id);
+    const esRisky = recetasEnRiesgo.has(item.r.id);
+    const riskCls = esMuyRisky ? 'muy-risky' : esRisky ? 'risky' : '';
+    const barColor = esMuyRisky ? 'var(--pk)' : esRisky ? 'var(--or)' : COLS[i%COLS.length];
+    return `<div class="fday-row ${riskCls}">
+      <div class="fday-row-top">
+        <span class="fdname">${item.r.n}</span>
+        <span class="fdqty">${item.esperados}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.4vw">
+        <div class="fday-bar-wrap" style="flex:1"><div class="fday-bar" style="width:${ancho}%;background:${barColor}"></div></div>
+        <span class="fdpct">${item.pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <button class="fdp-close" id="fdayClose">✕</button>
+    <div>
+      <div class="fdp-kick">${esHoy ? 'hoy · ' : ''}${diaSem} ${fechaNum} ${mes}</div>
+      <div class="fdp-title">Pronóstico</div>
+    </div>
+    <div>
+      <div class="fdp-total">${totalDia}</div>
+      <div class="fdp-sub">platos esperados</div>
+    </div>
+    ${evHtml}
+    <div class="fdp-divider"></div>
+    ${riesgoHtml}
+    ${riesgoHtml ? '<div class="fdp-divider"></div>' : ''}
+    <div class="fdp-label">Desglose por plato</div>
+    <div style="display:flex;flex-direction:column;gap:.55vw;overflow-y:auto;flex:1;padding-right:.2vw">${filasHtml}</div>`;
+
+  panel.classList.add('open');
+  const chartEl = document.getElementById('chart');
+  if(chartEl) chartEl.classList.add('panel-open');
+  selDay = d;
+  document.querySelectorAll('.bcol').forEach((col,i) => col.classList.toggle('sel', i === d));
+  document.getElementById('fdayClose').onclick = closeDayPanel;
+}
+function closeDayPanel(){
+  const panel = document.getElementById('fdayPanel');
+  if(panel){ panel.classList.remove('open'); }
+  const chartEl = document.getElementById('chart');
+  if(chartEl) chartEl.classList.remove('panel-open');
+  selDay = null;
+  document.querySelectorAll('.bcol').forEach(col => col.classList.remove('sel'));
+}
+
 function toggleEv(id){ const e=EVENTOS.find(x=>x.id===id); e.on=!e.on; renderAll();
   toast(`${e.ic} ${e.n} ${e.on?'activado':'desactivado'}: ${e.on===(e.m>0)?'más':'menos'} platos el ${WD[wdOf(e.d)]} · la despensa se recalculó · <a data-go="despensa">ver</a>`); }
 
