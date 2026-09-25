@@ -11,12 +11,12 @@
   body { background:#f6f1e7; color:#efe9dd; font-family:'Instrument Sans',system-ui,sans-serif; }
   header.q { padding:24px 40px 16px; }
   header.q h1 { font-family:'Fraunces',serif; font-weight:400; font-size:28px; }
-  header.q h1 em { color:#ff48b0; }
+  header.q h1 em { color:#c4366e; }
   header.q p { color:#a39d90; font-size:14px; max-width:980px; margin-top:6px; line-height:1.5; }
   header.q p b { color:#efe9dd; }
   .stagewrap { padding:0; }
   .stage { position:relative; width:100vw; height:max(100vh, 56vw); overflow:hidden;
-    --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#ff48b0; --yl:#ffe800; --bl:#0078bf; --or:#ff6c2f; --gr:#00a878;
+    --paper:#f6f1e7; --card:#fffdf8; --ink:#1d1a2b; --pk:#c4366e; --yl:#ffe800; --bl:#0078bf; --or:#ff6c2f; --gr:#00a878;
     background:var(--paper); color:var(--ink); display:flex; font-family:'Instrument Sans'; }
   .grain { position:absolute; inset:0; opacity:.28; mix-blend-mode:multiply; pointer-events:none; z-index:50;
      background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .3  0 0 0 0 .2  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
@@ -59,8 +59,8 @@
   .sbg .sect { margin-bottom:.7vw; }
   .sbped b { display:block; font-size:.95vw; font-weight:600; }
   .sbped small { display:block; font-family:'DM Mono'; font-size:.62vw; opacity:.55; margin-top:.25vw; }
-  .sbped a { display:inline-block; margin-top:.55vw; font-size:.74vw; font-weight:600; color:#ff8fcf; cursor:pointer; text-decoration:none; border-bottom:1px solid #ff8fcf55; }
-  .sbped a:hover { border-bottom-color:#ff8fcf; }
+  .sbped a { display:inline-block; margin-top:.55vw; font-size:.74vw; font-weight:600; color:#d4658f; cursor:pointer; text-decoration:none; border-bottom:1px solid #d4658f55; }
+  .sbped a:hover { border-bottom-color:#d4658f; }
   .sbped.ok b { color:#8be3bf; }
   .sbstat { display:flex; justify-content:space-between; align-items:baseline; padding:.42vw 0; border-bottom:1px solid #ffffff12; font-size:.74vw; }
   .sbstat:last-child { border-bottom:0; }
@@ -134,7 +134,7 @@
   .spark { width:100%; height:4.2vw; }
   .next { border-radius:.8vw; padding:.7vw .8vw; font-size:.72vw; line-height:1.45; border:1.5px dashed var(--ink); }
   .next b { font-weight:700; }
-  .next.late { border-color:var(--pk); background:#ff48b014; }
+  .next.late { border-color:var(--pk); background:#c4366e14; }
   .next.none { opacity:.7; }
   .uses { display:flex; flex-wrap:wrap; gap:.35vw; }
   .use { font-size:.66vw; padding:.25vw .55vw; border-radius:99px; background:var(--paper); border:1px solid #1d1a2b33; }
@@ -198,7 +198,7 @@
   .cov small { position:absolute; top:.8vw; right:0; font-family:'DM Mono'; font-size:.52vw; opacity:.7; white-space:nowrap; }
   .ai { font-size:.68vw; line-height:1.45; background:#0078bf12; border-radius:.8vw; padding:.6vw .7vw; display:flex; gap:.5vw; }
   .ai .orb { margin-top:.1vw; }
-  .warn { font-size:.68vw; line-height:1.45; background:#ff48b01c; border:1.5px solid var(--pk); border-radius:.8vw; padding:.5vw .7vw; }
+  .warn { font-size:.68vw; line-height:1.45; background:#c4366e1c; border:1.5px solid var(--pk); border-radius:.8vw; padding:.5vw .7vw; }
   .addit { font-size:.7vw; font-weight:600; padding:.5vw; border:1.5px dashed #1d1a2b66; border-radius:.7vw; text-align:center; cursor:pointer; opacity:.7; }
   .addit:hover { opacity:1; background:var(--paper); }
   .impact { background:var(--paper); border-radius:.8vw; padding:.7vw .8vw; }
@@ -217,7 +217,7 @@
 
   .notes { padding:0 40px 40px; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
   .note { font-size:13.5px; line-height:1.6; color:#b9b2a3; border-top:1px solid #3a372f; padding-top:12px; }
-  .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#ff48b0; font-style:normal; }
+  .note b { color:#efe9dd; display:block; font-size:15px; margin-bottom:4px; } .note i { color:#c4366e; font-style:normal; }
 
   /* ======== PRONÓSTICO ======== */
   .fbody { flex:1; display:flex; gap:2vw; margin-top:1.3vw; min-height:0; }
@@ -229,7 +229,7 @@
   .chart .zone { position:absolute; top:.8vw; font-family:'DM Mono'; font-size:.58vw; letter-spacing:.12em; text-transform:uppercase; opacity:.55; }
   .legB { position:absolute; left:1.2vw; top:.9vw; display:flex; gap:1.3vw; font-family:'DM Mono'; font-size:.6vw; opacity:.8; }
   .legB i { display:inline-block; width:.9vw; height:.7vw; margin-right:.35vw; vertical-align:middle; border-radius:.15vw; }
-  .legB i.hx { background:repeating-linear-gradient(-45deg,#ff48b0 0 3px,#ff48b099 3px 6px); }
+  .legB i.hx { background:repeating-linear-gradient(-45deg,#c4366e 0 3px,#c4366e99 3px 6px); }
   .legB i.mn { border:1.5px dashed var(--bl); }
   .barsB { position:absolute; left:1.2vw; right:1.2vw; top:2.6vw; bottom:2.4vw; display:grid; grid-template-columns:repeat(14,minmax(0,1fr)); gap:.5vw; align-items:end; border-bottom:3px solid var(--ink); }
   .bcol { min-width:0; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:stretch; }
@@ -238,7 +238,7 @@
   .blbl small { display:block; font-family:'DM Mono'; font-weight:400; font-size:.52vw; }
   .bbase { background:var(--bl); border-radius:.35vw .35vw .15vw .15vw; transition:height .6s cubic-bezier(.3,1.3,.5,1); }
   .bbase.cut { border-radius:0 0 .15vw .15vw; }
-  .bup { background:repeating-linear-gradient(-45deg,var(--pk) 0 .28vw,#ff48b099 .28vw .56vw); border:2px solid var(--pk); border-bottom:0; border-radius:.35vw .35vw 0 0; transition:height .6s; }
+  .bup { background:repeating-linear-gradient(-45deg,var(--pk) 0 .28vw,#c4366e99 .28vw .56vw); border:2px solid var(--pk); border-bottom:0; border-radius:.35vw .35vw 0 0; transition:height .6s; }
   .bmn { border:2px dashed var(--bl); border-bottom:0; border-radius:.35vw .35vw 0 0; transition:height .6s; }
   .bcol.t .bbase { box-shadow:inset 0 0 0 2px var(--ink); }
   .daysB { position:absolute; left:1.2vw; right:1.2vw; bottom:.7vw; display:grid; grid-template-columns:repeat(14,minmax(0,1fr)); gap:.5vw; font-family:'DM Mono'; font-size:.56vw; text-align:center; }
@@ -252,7 +252,7 @@
   .legendF { position:absolute; right:1vw; top:.7vw; display:flex; gap:1vw; font-family:'DM Mono'; font-size:.56vw; opacity:.8; }
   .legendF i { display:inline-block; width:1vw; height:.22vw; margin-right:.3vw; vertical-align:middle; border-radius:2px; }
   .legendF i.dash { background:repeating-linear-gradient(90deg,#1d1a2b 0 3px,transparent 3px 6px); opacity:.5; }
-  .legendF i.hat { height:.7vw; background:repeating-linear-gradient(-45deg,#ff48b066 0 2px,transparent 2px 4px); }
+  .legendF i.hat { height:.7vw; background:repeating-linear-gradient(-45deg,#c4366e66 0 2px,transparent 2px 4px); }
   .ev { position:absolute; transform:translate(-50%,-100%) rotate(var(--r,-4deg)); font-family:'Bricolage Grotesque'; font-weight:800; font-size:.7vw; line-height:1.05; padding:.35vw .55vw; border-radius:.5vw; background:var(--yl); border:1.5px solid var(--ink); box-shadow:.2vw .2vw 0 var(--ink); cursor:pointer; white-space:nowrap; transition:opacity .3s, filter .3s; z-index:3; }
   .ev small { display:block; font-family:'DM Mono'; font-weight:400; font-size:.54vw; }
   .ev.off { opacity:.35; filter:grayscale(1); box-shadow:none; border-style:dashed; }
@@ -656,7 +656,7 @@ function renderSide(){
   const salud=Math.round(I.filter(x=>cov(x)+conf(x.id)/x.cons>=7).length/I.length*100);
   const wk=Array.from({length:7},(_,d)=>platos(d)).reduce((a,b)=>a+b,0);
   const dPct=Math.round((tot(vis)/1900000-1)*100);
-  document.getElementById('sbMet').innerHTML=`<div class="sbstat"><span>Platos esperados</span><b>${wk}</b></div><div class="sbstat"><span>Compras vs pasada</span><b style="color:${dPct<=0?'#8be3bf':'#ff8fcf'}">${dPct>0?'+':'−'}${Math.abs(dPct)}%</b></div><div class="sbstat"><span>Despensa cubierta</span><b>${salud}%</b></div>`;
+  document.getElementById('sbMet').innerHTML=`<div class="sbstat"><span>Platos esperados</span><b>${wk}</b></div><div class="sbstat"><span>Compras vs pasada</span><b style="color:${dPct<=0?'#8be3bf':'#d4658f'}">${dPct>0?'+':'−'}${Math.abs(dPct)}%</b></div><div class="sbstat"><span>Despensa cubierta</span><b>${salud}%</b></div>`;
 }
 
 /* ================== DESPENSA ================== */
